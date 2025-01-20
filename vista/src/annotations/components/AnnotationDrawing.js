@@ -17,9 +17,6 @@ import flatten from "lodash/flatten";
 import EditTool from "../utils/EditTool";
 import { mapChildren } from "../utils/utils";
 
-// import * as utils from '../utils/utils';
-// import { mapChildren } from "./utils";
-
 /** */
 class AnnotationDrawing extends Component {
   /** */

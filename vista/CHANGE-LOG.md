@@ -2,7 +2,9 @@
 
 2024-20-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
-- Connected the SimpleAnnotationServer to store annotations.
+- Conditional annotation's color fill based on the level of interpretation selected.
+  Modified `AnnotationCreation.js` and `AnnotationDrawing.js` files.
+- Connected SimpleAnnotationServer to store annotations.
 - Imported files from `mirador-multi-level-annotations`.
 - Created plugin folder structure.
 - Deleted useless file in the `VISTA` folder.

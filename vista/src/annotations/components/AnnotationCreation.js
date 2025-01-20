@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -94,11 +94,7 @@ class AnnotationCreation extends Component {
     this.state = {
       ...toolState,
       conceptualLevel: "Work",
-      anchorOptions: [
-        "Scriptio Infima",
-        "Scriptio Inferior",
-        "Scriptio Superior",
-      ],
+      anchorOptions: ["Pre-Iconographical", "Iconographical", "Iconological"],
       anchorValue: "",
       entityOptions: ["Manuscript Vat.gr.984", "Manuscript Vat.gr.985"],
       entityValue: "",
@@ -311,15 +307,43 @@ class AnnotationCreation extends Component {
   }
 
   /** */
+  // handleAnchorChange(event, newValue) {
+  //   const { anchorOptions } = this.state;
+  //   if (newValue && !anchorOptions.includes(newValue)) {
+  //     this.setState({
+  //       anchorOptions: [...anchorOptions, newValue],
+  //       anchorValue: newValue,
+  //     });
+  //   } else {
+  //     this.setState({ anchorValue: newValue });
+  //   }
+  // }
+
   handleAnchorChange(event, newValue) {
     const { anchorOptions } = this.state;
+
+    // 1) Choose a color based on the recognition level
+    let nextFillColor = null;
+    if (newValue === "Pre-Iconographical") {
+      nextFillColor = "rgba(255, 0, 0, 0.3)"; // red-ish
+    } else if (newValue === "Iconographical") {
+      nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
+    } else if (newValue === "Iconological") {
+      nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
+    }
+
+    // 2) Keep old logic to allow free text or reuse existing anchor
     if (newValue && !anchorOptions.includes(newValue)) {
       this.setState({
         anchorOptions: [...anchorOptions, newValue],
         anchorValue: newValue,
+        fillColor: nextFillColor, // set the fillColor
       });
     } else {
-      this.setState({ anchorValue: newValue });
+      this.setState({
+        anchorValue: newValue,
+        fillColor: nextFillColor, // set the fillColor
+      });
     }
   }
 
@@ -519,7 +543,7 @@ class AnnotationCreation extends Component {
           </Grid>
           <Grid container>
             <Grid item xs={12}>
-              <Typography variant="overline">Conceptual Level</Typography>
+              <Typography variant="overline">Level of Recognition</Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
