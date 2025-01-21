@@ -28,7 +28,7 @@ const MiradorViewer = () => {
       windows: [
         {
           manifestId:
-            "https://iiif.harvardartmuseums.org/manifests/object/299843",
+            "https://media.getty.edu/iiif/manifest/dff643f5-be35-4009-a36b-b392ee5d45fd",
           // imageToolsEnabled: true,  (optional)
         },
       ],

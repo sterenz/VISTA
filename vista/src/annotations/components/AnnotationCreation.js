@@ -52,6 +52,10 @@ class AnnotationCreation extends Component {
   constructor(props) {
     console.log("PROPS --->", props);
     super(props);
+
+    // Create a ref to access AnnotationDrawing's instance methods
+    this.annotationDrawingRef = React.createRef();
+
     const annoState = {};
     if (props.annotation) {
       if (Array.isArray(props.annotation.body)) {
@@ -198,6 +202,10 @@ class AnnotationCreation extends Component {
       criterionValue,
       textEditorStateBustingKey,
     } = this.state;
+
+    // Debug check: show final exported SVG
+    console.log("Submitting annotation with SVG:", svg);
+
     canvases.forEach((canvas) => {
       const storageAdapter = config.annotation.adapter(canvas.id);
       const anno = new WebAnnotation({
@@ -271,6 +279,11 @@ class AnnotationCreation extends Component {
       textEditorStateBustingKey: textEditorStateBustingKey + 1,
       xywh: null,
     });
+
+    // **HERE** is where we finalize the path, so color changes won't affect it later
+    if (this.annotationDrawingRef?.current) {
+      this.annotationDrawingRef.current.finalizeCurrentPath();
+    }
   }
 
   /** */
@@ -330,6 +343,15 @@ class AnnotationCreation extends Component {
       nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
     } else if (newValue === "Iconological") {
       nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
+    }
+
+    // Example in AnnotationCreation.js, after picking color in handleAnchorChange
+    if (this.annotationDrawingRef?.current?.currentPath) {
+      this.annotationDrawingRef.current.currentPath.fillColor = nextFillColor;
+    }
+    // Re-export so your final SVG is updated with the new fill
+    if (this.annotationDrawingRef?.current?.reExportPaths) {
+      this.annotationDrawingRef.current.reExportPaths();
     }
 
     // 2) Keep old logic to allow free text or reuse existing anchor
@@ -418,6 +440,7 @@ class AnnotationCreation extends Component {
         id={id}
       >
         <AnnotationDrawing
+          ref={this.annotationDrawingRef} // <-- pass the ref here
           activeTool={activeTool}
           fillColor={fillColor}
           strokeColor={strokeColor}

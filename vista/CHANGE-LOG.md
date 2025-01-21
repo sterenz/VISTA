@@ -1,5 +1,9 @@
 # 📑 Change log
 
+2024-21-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Method `reExportPaths` in `AnnotationDrawing.js` handle fillColor rerender that allows to first draw the annotation and then change the fill color.
+
 2024-20-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
 - Conditional annotation's color fill based on the level of interpretation selected.

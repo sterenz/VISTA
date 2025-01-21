@@ -12,61 +12,193 @@ import {
   RectangleTool,
   FreeformPathTool,
 } from "@psychobolt/react-paperjs-editor";
-import { Point } from "paper";
+import { Point } from "paper"; // Ensure paper.js is imported
 import flatten from "lodash/flatten";
 import EditTool from "../utils/EditTool";
 import { mapChildren } from "../utils/utils";
 
-/** */
 class AnnotationDrawing extends Component {
-  /** */
   constructor(props) {
     super(props);
-
+    this.paperScope = null;
+    this.currentPath = null; // track current shape
     this.addPath = this.addPath.bind(this);
   }
 
-  /** */
+  finalizeCurrentPath() {
+    this.currentPath = null;
+  }
+
   componentDidMount() {
     const { windowId } = this.props;
     this.OSDReference = OSDReferences.get(windowId);
   }
 
-  /** */
+  componentDidUpdate(prevProps) {
+    const { fillColor } = this.props;
+    if (fillColor !== prevProps.fillColor && this.currentPath) {
+      // Update only the path currently being drawn
+      this.currentPath.fillColor = fillColor;
+    }
+  }
+
+  /**
+   * Called when a new path is finished being drawn.
+   */
   addPath(path) {
     const { closed, strokeWidth, updateGeometry } = this.props;
-    // TODO: Compute xywh of bounding container of layers
-    const { bounds } = path;
-    const { x, y, width, height } = bounds;
-    path.closed = closed; // eslint-disable-line no-param-reassign
-    // Reset strokeWidth for persistence
-    path.strokeWidth = strokeWidth; // eslint-disable-line no-param-reassign
-    path.data.state = null; // eslint-disable-line no-param-reassign
-    const svgExports = flatten(
-      path.project.layers.map((layer) =>
-        flatten(mapChildren(layer)).map((aPath) =>
-          aPath.exportSVG({ asString: true })
-        )
-      )
-    );
-    svgExports.unshift("<svg xmlns='http://www.w3.org/2000/svg'>");
-    svgExports.push("</svg>");
+    this.currentPath = path; // mark as "in-progress"
+
+    path.closed = closed;
+    path.strokeWidth = strokeWidth;
+
+    const svgParts = [];
+    path.project.layers.forEach((layer) => {
+      flatten(mapChildren(layer)).forEach((subPath) => {
+        console.log("DEBUG subPath fillColor:", subPath.fillColor);
+        console.log("DEBUG subPath strokeColor:", subPath.strokeColor);
+        // 1) Export as DOM element
+        const svgElem = subPath.exportSVG({ asString: false });
+
+        // 2) Convert fillColor = rgba(...) => fill + fill-opacity
+        if (subPath.fillColor) {
+          const { red, green, blue, alpha } = subPath.fillColor;
+          const r255 = Math.round(red * 255);
+          const g255 = Math.round(green * 255);
+          const b255 = Math.round(blue * 255);
+          svgElem.setAttribute("fill", `rgb(${r255}, ${g255}, ${b255})`);
+          if (alpha < 1) {
+            svgElem.setAttribute("fill-opacity", alpha);
+          }
+        }
+        // Similarly for strokeColor
+
+        // 3) Serialize back to string
+        const pathStr = new XMLSerializer().serializeToString(svgElem);
+        svgParts.push(pathStr);
+      });
+    });
+
+    svgParts.unshift("<svg xmlns='http://www.w3.org/2000/svg'>");
+    svgParts.push("</svg>");
+
+    // Provide geometry to parent
     updateGeometry({
-      svg: svgExports.join(""),
+      svg: svgParts.join(""),
       xywh: [
-        Math.floor(x),
-        Math.floor(y),
-        Math.floor(width),
-        Math.floor(height),
+        Math.floor(path.bounds.x),
+        Math.floor(path.bounds.y),
+        Math.floor(path.bounds.width),
+        Math.floor(path.bounds.height),
       ].join(","),
     });
   }
 
-  /** */
+  // This method is essentially the same logic you use in addPath(), but it runs
+  // anytime you need to re-serialize the shapes to <svg> again.
+  reExportPaths() {
+    const { updateGeometry } = this.props;
+    if (!this.paperScope) return;
+
+    const svgParts = [];
+    this.paperScope.project.layers.forEach((layer) => {
+      flatten(mapChildren(layer)).forEach((subPath) => {
+        console.log("DEBUG subPath fillColor:", subPath.fillColor);
+        console.log("DEBUG subPath strokeColor:", subPath.strokeColor);
+        // same code from addPath’s alpha fix approach
+        const svgElem = subPath.exportSVG({ asString: false });
+
+        // Fill color
+        if (subPath.fillColor) {
+          const { red, green, blue, alpha } = subPath.fillColor;
+          const r255 = Math.round(red * 255);
+          const g255 = Math.round(green * 255);
+          const b255 = Math.round(blue * 255);
+          svgElem.setAttribute("fill", `rgb(${r255}, ${g255}, ${b255})`);
+          if (alpha < 1) svgElem.setAttribute("fill-opacity", alpha);
+        }
+
+        // Stroke color
+        if (subPath.strokeColor) {
+          const { red, green, blue, alpha } = subPath.strokeColor;
+          const r255 = Math.round(red * 255);
+          const g255 = Math.round(green * 255);
+          const b255 = Math.round(blue * 255);
+          svgElem.setAttribute("stroke", `rgb(${r255}, ${g255}, ${b255})`);
+          if (alpha < 1) svgElem.setAttribute("stroke-opacity", alpha);
+          if (subPath.strokeWidth) {
+            svgElem.setAttribute("stroke-width", subPath.strokeWidth);
+          }
+        }
+
+        const pathStr = new XMLSerializer().serializeToString(svgElem);
+        svgParts.push(pathStr);
+      });
+    });
+    svgParts.unshift("<svg xmlns='http://www.w3.org/2000/svg'>");
+    svgParts.push("</svg>");
+
+    // Update the parent
+    updateGeometry({
+      svg: svgParts.join(""),
+      // optional: xywh if you want to keep bounding box updated
+    });
+  }
+
+  /**
+   * Export a single Paper.js path to an SVG string with alpha-friendly fill/stroke attributes.
+   *
+   * Paper.js can handle "rgba(...)" internally, but standard SVG needs
+   * fill="rgb(r,g,b)" and fill-opacity="someAlpha".
+   */
+  exportPathWithAlphaFix(aPath) {
+    // 1) Export as a DOM element (not a string)
+    const svgElem = aPath.exportSVG({ asString: false });
+
+    // 2) If the path has a fillColor, convert Paper.js color -> valid SVG fill + fill-opacity
+    if (aPath.fillColor) {
+      // paper.Color gives channels in [0..1]
+      const { red, green, blue, alpha } = aPath.fillColor;
+      const r255 = Math.round(red * 255);
+      const g255 = Math.round(green * 255);
+      const b255 = Math.round(blue * 255);
+      // fill
+      svgElem.setAttribute("fill", `rgb(${r255}, ${g255}, ${b255})`);
+      // only set fill-opacity if alpha < 1
+      if (alpha < 1) {
+        svgElem.setAttribute("fill-opacity", alpha);
+      }
+    }
+
+    // 3) If you also want to handle stroke alpha, do similarly:
+    if (aPath.strokeColor) {
+      const { red, green, blue, alpha } = aPath.strokeColor;
+      const r255 = Math.round(red * 255);
+      const g255 = Math.round(green * 255);
+      const b255 = Math.round(blue * 255);
+      svgElem.setAttribute("stroke", `rgb(${r255}, ${g255}, ${b255})`);
+      if (alpha < 1) {
+        svgElem.setAttribute("stroke-opacity", alpha);
+      }
+      // Also set the stroke-width if desired
+      if (aPath.strokeWidth) {
+        svgElem.setAttribute("stroke-width", aPath.strokeWidth);
+      }
+    }
+
+    // 4) Convert DOM element back to a string
+    const svgString = new XMLSerializer().serializeToString(svgElem);
+    return svgString;
+  }
+
+  /**
+   * Render the paper.js container with the chosen tool
+   */
   paperThing() {
     const { activeTool, fillColor, strokeColor, strokeWidth, svg } = this.props;
     if (!activeTool || activeTool === "cursor") return null;
-    // Setup Paper View to have the same center and zoom as the OSD Viewport
+
+    // Sync Paper view with OSD
     const viewportZoom = this.OSDReference.viewport.getZoom(true);
     const image1 = this.OSDReference.world.getItemAt(0);
     const center = image1.viewportToImageCoordinates(
@@ -104,7 +236,6 @@ class AnnotationDrawing extends Component {
 
     return (
       <div
-        className="foo"
         style={{
           height: "100%",
           left: 0,
@@ -118,21 +249,26 @@ class AnnotationDrawing extends Component {
           viewProps={viewProps}
         >
           {renderWithPaperScope((paper) => {
+            this.paperScope = paper;
+
+            // If we have existing SVG and no existing paths, import them
             const paths = flatten(
               paper.project.layers.map((layer) =>
-                flatten(mapChildren(layer)).map((aPath) => aPath)
+                flatten(mapChildren(layer)).map((p) => p)
               )
             );
             if (svg && paths.length === 0) {
               paper.project.importSVG(svg);
             }
-            paper.settings.handleSize = 10; // eslint-disable-line no-param-reassign
-            paper.settings.hitTolerance = 10; // eslint-disable-line no-param-reassign
+
+            paper.settings.handleSize = 10;
+            paper.settings.hitTolerance = 10;
+
             return (
               <ActiveTool
                 onPathAdd={this.addPath}
                 pathProps={{
-                  fillColor,
+                  fillColor, // The color for new shapes
                   strokeColor,
                   strokeWidth: strokeWidth / paper.view.zoom,
                 }}
@@ -145,7 +281,6 @@ class AnnotationDrawing extends Component {
     );
   }
 
-  /** */
   render() {
     const { windowId } = this.props;
     this.OSDReference = OSDReferences.get(windowId).current;
