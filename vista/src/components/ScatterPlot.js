@@ -30,26 +30,45 @@ const ScatterPlot = () => {
   const annotations = [
     {
       id: "urn:uuid:1",
-      creationTime: "2023-09-15T10:00:00Z",
+      creationTime: "2024-09-15T10:00:00Z",
+      hasAnchor: { label: "Pre-iconographical" },
+      creator: { name: "D. Surace" },
+    },
+    {
+      id: "urn:uuid:5",
+      creationTime: "2024-04-12T10:00:00Z",
+      hasAnchor: { label: "Pre-iconographical" },
+      creator: { name: "D. Surace" },
+    },
+    {
+      id: "urn:uuid:6",
+      creationTime: "2024-09-09T10:00:00Z",
       hasAnchor: { label: "Pre-iconographical" },
       creator: { name: "D. Surace" },
     },
     {
       id: "urn:uuid:4",
-      creationTime: "2023-11-02T10:00:00Z",
+      creationTime: "2024-11-02T10:00:00Z",
       hasAnchor: { label: "Pre-iconographical" },
       creator: { name: "D. Surace" },
     },
     {
       id: "urn:uuid:2",
-      creationTime: "2023-10-05T14:30:00Z",
+      creationTime: "2024-10-05T14:30:00Z",
       hasAnchor: { label: "Iconographical" },
       creator: { name: "A. Rossi" },
       relatedTo: ["urn:uuid:1", "urn:uuid:4"], // Connections to pre-iconographical annotations
     },
     {
+      id: "urn:uuid:7",
+      creationTime: "2024-09-09T14:30:00Z",
+      hasAnchor: { label: "Iconographical" },
+      creator: { name: "A. Rossi" },
+      relatedTo: ["urn:uuid:5", "urn:uuid:4", "urn:uuid:6"], // Connections to pre-iconographical annotations
+    },
+    {
       id: "urn:uuid:3",
-      creationTime: "2023-11-20T12:00:00Z",
+      creationTime: "2024-11-20T12:00:00Z",
       hasAnchor: { label: "Iconological" },
       creator: { name: "M. Bianchi" },
       relatedTo: ["urn:uuid:2"], // Connection to iconographical annotation
@@ -86,7 +105,7 @@ const ScatterPlot = () => {
       data: levelData,
       backgroundColor: levelColors[level],
       borderColor: levelColors[level],
-      pointRadius: 8, // Larger points
+      pointRadius: 20, // Larger points
     };
   });
 
