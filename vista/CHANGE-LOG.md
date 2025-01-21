@@ -2,6 +2,8 @@
 
 2024-21-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Created `vistaTheme` to handle Mirador visual style theme.
+- Created `style.css` to handle app style.
 - Method `reExportPaths` in `AnnotationDrawing.js` handle fillColor rerender that allows to first draw the annotation and then change the fill color.
 
 2024-20-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
