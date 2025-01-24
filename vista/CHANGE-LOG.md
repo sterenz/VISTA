@@ -2,6 +2,11 @@
 
 2025-24-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Added conditional rendering of annotations stroke based on states (draft, published, or deprecated)
+- Installed MaterialUi Lab with `yarn add @material-ui/lab`.
+- Refactored `AnnotationCreation.js` to be compliant with LISA data model
+- Created `.env` file to manage glocal variables.
+- Refactored `LocalStorageAdapter.js` with error handling.
 - Refactored all plugins exports.
 - Removed `<React.StrictMode>` in `index.js`.
 
