@@ -30,8 +30,10 @@ WindowSideBarButtonWrapper.defaultProps = {
   PluginComponents: [],
 };
 
-export default {
+const pluginConfig = {
   component: WindowSideBarButtonWrapper,
   mode: "wrap",
   target: "WindowSideBarButtons",
 };
+
+export default pluginConfig;

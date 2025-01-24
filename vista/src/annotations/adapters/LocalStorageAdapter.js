@@ -14,16 +14,20 @@ export default class LocalStorageAdapter {
       "@context": [
         "http://www.w3.org/ns/anno.jsonld",
         {
-          mlao: "https://purl.archive.org/domain/mlao/",
-          oa: "https://www.w3.org/TR/annotation-vocab/#",
-          ecrm: "http://erlangen-crm.org/current/",
-          frbroo: "http://iflastandards.info/ns/fr/frbr/frbroo/",
-          rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+          rdf: "<http://www.w3.org/1999/02/22-rdf-syntax-ns#>",
           rdfs: "http://www.w3.org/2000/01/rdf-schema#",
-          hico: "http://purl.org/emmedi/hico/",
+          xsd: "http://www.w3.org/2001/XMLSchema#",
+          foaf: "<http://xmlns.com/foaf/0.1/>",
+          ecrm: "http://erlangen-crm.org/current/",
+          dct: "http://purl.org/dc/terms/",
+          oa: "http://www.w3.org/ns/oa#",
+          mlao: "http://w3id.org/mlao#",
           prov: "http://www.w3.org/ns/prov#",
-          dct: "https://www.dublincore.org/specifications/dublin-core/dcmi-terms/",
-          foaf: "http://xmlns.com/foaf/spec/",
+          hico: "http://purl.org/emmedi/hico",
+          icon: "https://w3id.org/icon/ontology/",
+          lrm: "http://iflastandards.info/ns/lrm/lrmoo/",
+          lisa: "http://sterenz.github.io/lisa/ontology/",
+
           wasGeneratedBy: "prov:wasGeneratedBy",
           hasConceptualLevel: "mlao:hasConceptualLevel",
           hasInterpretationCriterion: "hico:hasInterpretationCriterion",
@@ -43,8 +47,8 @@ export default class LocalStorageAdapter {
         },
       ],
       id: this.annotationPageId,
-      items: [],
       type: "AnnotationPage",
+      items: [],
     };
     const annotationPage = (await this.all()) || emptyAnnoPage;
     annotationPage.items.push(annotation);

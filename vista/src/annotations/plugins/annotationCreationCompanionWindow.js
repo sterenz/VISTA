@@ -36,9 +36,11 @@ function mapStateToProps(state, { id: companionWindowId, windowId }) {
   };
 }
 
-export default {
+const annotationCreationConfig = {
   companionWindowKey: "annotationCreation",
   component: AnnotationCreation,
   mapDispatchToProps,
   mapStateToProps,
 };
+
+export default annotationCreationConfig;

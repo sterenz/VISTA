@@ -8,10 +8,12 @@ import miradorAnnotationPlugin from "./miradorAnnotationPlugin";
 import windowSideBarButtonsPlugin from "./windowSideBarButtonsPlugin";
 
 // Export them together in an array
-export default [
+const plugins = [
   annotationCreationCompanionWindow,
   canvasAnnotationsPlugin,
   externalStorageAnnotationPlugin,
   miradorAnnotationPlugin,
   windowSideBarButtonsPlugin,
 ];
+
+export default plugins;

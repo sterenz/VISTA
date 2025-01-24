@@ -166,7 +166,7 @@ export const vistaTheme = {
         MuiAppBar: {
           root: {
             "&.MuiAppBar-positionAbsolute": {
-              display: "none", // Hide the left toolbar
+              //display: "none", // Hide the left toolbar
             },
           },
         },

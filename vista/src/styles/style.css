@@ -8,9 +8,10 @@
   overflow: hidden;
 }
 
-.Connect\(WithPlugins\(Workspace\)\)-workspaceWithControlPanel-21 {
-  padding-left: 0px !important; /* since the left navbar is hidden I don't need the padding */
-}
+/* since the left navbar is hidden I don't need the padding */
+/* .Connect\(WithPlugins\(Workspace\)\)-workspaceWithControlPanel-21 {
+  padding-left: 0px !important; 
+} */
 
 .mirador-scrollto-scrollable {
   scrollbar-color: #2d3439 #575d62;

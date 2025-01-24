@@ -35,6 +35,7 @@ const MiradorViewer = () => {
         {
           manifestId:
             "https://media.getty.edu/iiif/manifest/dff643f5-be35-4009-a36b-b392ee5d45fd",
+          // "https://manifests.collections.yale.edu/yuag/obj/359"
         },
       ],
     };

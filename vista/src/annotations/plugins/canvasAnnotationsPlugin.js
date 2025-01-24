@@ -132,10 +132,12 @@ const mapDispatchToProps = (dispatch, props) => ({
     dispatch(actions.setWindowViewType(props.targetProps.windowId, "single")),
 });
 
-export default {
+const canvasAnnotationsPluginConfig = {
   component: CanvasAnnotationsWrapper,
   mapDispatchToProps,
   mapStateToProps,
   mode: "wrap",
   target: "CanvasAnnotations",
 };
+
+export default canvasAnnotationsPluginConfig;
