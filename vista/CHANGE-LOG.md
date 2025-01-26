@@ -2,6 +2,8 @@
 
 2025-26-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Updated UI structure in `AnnotationCreation.js`.
+- Modified `AnnotationDrawing.js` to accept `fillColor` and `strokeColor`.
 - Installed `material-ui/lab` with `yarn add @material-ui/lab`.
 - Created `.env` to store global variables.
 - Updated `LocalStorageAdapter.js` with new classes and properties.

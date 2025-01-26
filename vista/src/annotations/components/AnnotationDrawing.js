@@ -46,11 +46,16 @@ class AnnotationDrawing extends Component {
    * Called when a new path is finished being drawn.
    */
   addPath(path) {
-    const { closed, strokeWidth, updateGeometry } = this.props;
+    const { closed, strokeWidth, updateGeometry, fillColor, strokeColor } =
+      this.props;
     this.currentPath = path; // mark as "in-progress"
 
     path.closed = closed;
     path.strokeWidth = strokeWidth;
+
+    // Apply the current fill color TO BE TESTED
+    if (fillColor) path.fillColor = fillColor;
+    if (strokeColor) path.strokeColor = strokeColor;
 
     const svgParts = [];
     path.project.layers.forEach((layer) => {

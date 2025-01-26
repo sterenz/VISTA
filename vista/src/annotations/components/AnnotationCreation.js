@@ -18,7 +18,6 @@ import StrokeColorIcon from "@material-ui/icons/BorderColor";
 import LineWeightIcon from "@material-ui/icons/LineWeight";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
 import FormatShapesIcon from "@material-ui/icons/FormatShapes";
-import InputLabel from "@material-ui/core/InputLabel";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -77,6 +76,12 @@ class AnnotationCreation extends Component {
               annoState.xywh = selector.value.replace("xywh=", "");
             }
           });
+        }
+        if (props.annotation.recognitionValue) {
+          annoState.recognitionValue = props.annotation.recognitionValue;
+        }
+        if (props.annotation.fillColor) {
+          annoState.fillColor = props.annotation.fillColor;
         } else {
           annoState.svg = props.annotation.target.selector.value;
         }
@@ -95,15 +100,23 @@ class AnnotationCreation extends Component {
 
     this.state = {
       ...toolState,
-      conceptualLevel: "Work",
-      anchorOptions: ["Pre-Iconographical", "Iconographical", "Iconological"],
-      anchorValue: "",
+      recognitionOptions: [
+        "Pre-Iconographical",
+        "Iconographical",
+        "Iconological",
+      ], // New Field
+      recognitionValue: "", // New Field
       entityOptions: ["Manuscript Vat.gr.984", "Manuscript Vat.gr.985"],
       entityValue: "",
       authorOptions: ["D. Surace", "M. F. Bocchi"],
       authorValue: "",
       criterionOptions: ["Diplomatic Transcription", "Paleographic Analysis"],
       criterionValue: "",
+      interpretationTypeOptions: ["Type A", "Type B", "Type C"], // New Field
+      interpretationTypeValue: "", // New Field
+      expressionUri: "", // New Field
+      stageOptions: ["Draft", "Published", "Deprecated"], // New Field
+      stageValue: "", // New Field
       annoBody: "",
       colorPopoverOpen: false,
       lineWeightPopoverOpen: false,
@@ -126,14 +139,13 @@ class AnnotationCreation extends Component {
     this.handleCloseLineWeight = this.handleCloseLineWeight.bind(this);
     this.closeChooseColor = this.closeChooseColor.bind(this);
     this.updateStrokeColor = this.updateStrokeColor.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleAnchorChange = this.handleAnchorChange.bind(this);
+    //this.handleChange = this.handleChange.bind(this);
+    //this.handleAnchorChange = this.handleAnchorChange.bind(this);
     this.handleEntityChange = this.handleEntityChange.bind(this);
     this.handleAuthorChange = this.handleAuthorChange.bind(this);
     this.handleCriterionChange = this.handleCriterionChange.bind(this);
   }
 
-  /** */
   handleCloseLineWeight(e) {
     this.setState({
       lineWeightPopoverOpen: false,
@@ -141,7 +153,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  /** */
   handleLineWeightSelect(e) {
     this.setState({
       lineWeightPopoverOpen: false,
@@ -150,7 +161,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  /** */
   openChooseColor(e) {
     this.setState({
       colorPopoverOpen: true,
@@ -159,7 +169,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  /** */
   openChooseLineWeight(e) {
     this.setState({
       lineWeightPopoverOpen: true,
@@ -167,7 +176,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  /** */
   closeChooseColor(e) {
     this.setState({
       colorPopoverOpen: false,
@@ -176,7 +184,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  /** */
   updateStrokeColor(color) {
     const { currentColorType } = this.state;
     this.setState({
@@ -184,7 +191,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  /** */
   submitForm(e) {
     e.preventDefault();
     const { annotation, canvases, receiveAnnotation, config } = this.props;
@@ -193,11 +199,15 @@ class AnnotationCreation extends Component {
       tags,
       xywh,
       svg,
-      conceptualLevel,
+      //conceptualLevel,
+      recognitionValue,
       anchorValue,
       entityValue,
       authorValue,
       criterionValue,
+      interpretationTypeValue,
+      expressionUri,
+      stageValue,
       textEditorStateBustingKey,
     } = this.state;
 
@@ -216,13 +226,19 @@ class AnnotationCreation extends Component {
         xywh,
         wasGeneratedBy: {
           id: `https://purl.archive.org/domain/mlao/interpretation/${uuid()}`,
-          type: "InterpretationAct",
+          type: "hico:InterpretationAct",
           hasInterpretationCriterion: {
             id: `https://purl.archive.org/domain/mlao/interpretation/criterion/${criterionValue
               .toLowerCase()
               .replaceAll(" ", "-")}`,
-            type: "InterpretationCriterion",
+            type: "hico:InterpretationCriterion",
           },
+          isExtractedFrom: expressionUri
+            ? {
+                id: expressionUri, // Assuming the user pastes a valid URI
+                type: "lrm:F2_Expression",
+              }
+            : "",
         },
         creator: authorValue
           ? {
@@ -234,21 +250,54 @@ class AnnotationCreation extends Component {
               name: `${authorValue}`,
             }
           : "",
-        hasAnchor: conceptualLevel
+        // hasAnchor: conceptualLevel
+        //   ? {
+        //       label: `${anchorValue}`,
+        //       id: `https://purl.archive.org/domain/mlao/anchor/${anchorValue
+        //         .toLowerCase()
+        //         .replaceAll(" ", "-")}`, // https://digi.vatlib.it/iiif/MSS_Vat.gr.984/canvas/p0001
+        //       type: "Anchor",
+        //       hasConceptualLevel: {
+        //         id: `https://purl.archive.org/domain/mlao/${conceptualLevel}/${uuid()}`,
+        //         type: `${conceptualLevel}`,
+        //       },
+        //       isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
+        //         .toLowerCase()
+        //         .replaceAll(" ", "-")
+        //         .replaceAll(".", "")}`,
+        //     }
+        //   : "",
+        // hasConceptualLevel: {
+        //   id: `https://purl.archive.org/domain/mlao/conceptualLevel/${conceptualLevel
+        //     .toLowerCase()
+        //     .replaceAll(" ", "-")}`,
+        //   type: conceptualLevel, // e.g., "IconographicalRecognition"
+        // },
+        // If you intend to keep the older "hasConceptualLevel" in your data model,
+        // rename it to “hasRecognitionLevel” or something consistent:
+
+        hasRecognitionLevel: {
+          id: `https://purl.archive.org/domain/mlao/recognitionLevel/${recognitionValue
+            .toLowerCase()
+            .replaceAll(" ", "-")}`,
+          type: recognitionValue,
+        },
+        recognitionValue: this.state.recognitionValue,
+        fillColor: this.state.fillColor,
+        interpretationType: interpretationTypeValue
           ? {
-              label: `${anchorValue}`,
-              id: `https://purl.archive.org/domain/mlao/anchor/${anchorValue
+              id: `https://purl.archive.org/domain/mlao/interpretation/type/${interpretationTypeValue
                 .toLowerCase()
-                .replaceAll(" ", "-")}`, // https://digi.vatlib.it/iiif/MSS_Vat.gr.984/canvas/p0001
-              type: "Anchor",
-              hasConceptualLevel: {
-                id: `https://purl.archive.org/domain/mlao/${conceptualLevel}/${uuid()}`,
-                type: `${conceptualLevel}`,
-              },
-              isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
-                .toLowerCase()
-                .replaceAll(" ", "-")
-                .replaceAll(".", "")}`,
+                .replaceAll(" ", "-")}`,
+              type: "hico:InterpretationType",
+              label: interpretationTypeValue,
+            }
+          : "",
+        hasStage: stageValue
+          ? {
+              id: `https://purl.archive.org/domain/mlao/stage/${stageValue.toLowerCase()}`,
+              type: "lisa:PublishingStage",
+              label: stageValue,
             }
           : "",
       }).toJson();
@@ -276,6 +325,9 @@ class AnnotationCreation extends Component {
       svg: null,
       textEditorStateBustingKey: textEditorStateBustingKey + 1,
       xywh: null,
+      interpretationTypeValue: "",
+      expressionUri: "",
+      stageValue: "Draft",
     });
 
     // **HERE** is where we finalize the path, so color changes won't affect it later
@@ -284,26 +336,22 @@ class AnnotationCreation extends Component {
     }
   }
 
-  /** */
   changeTool(e, tool) {
     this.setState({
       activeTool: tool,
     });
   }
 
-  /** */
   changeClosedMode(e) {
     this.setState({
       closedMode: e.currentTarget.value,
     });
   }
 
-  /** */
   updateBody(annoBody) {
     this.setState({ annoBody });
   }
 
-  /** */
   updateGeometry({ svg, xywh }) {
     this.setState({
       svg,
@@ -311,11 +359,11 @@ class AnnotationCreation extends Component {
     });
   }
 
-  handleChange(event) {
-    console.log("EVENTO ----->", event);
-    this.setState({ conceptualLevel: event.target.value });
-    // console.log(this.conceptualLevel);
-  }
+  // handleChange(event) {
+  //   console.log("EVENTO ----->", event);
+  //   this.setState({ conceptualLevel: event.target.value });
+  //   console.log(this.conceptualLevel);
+  // }
 
   /** */
   // handleAnchorChange(event, newValue) {
@@ -330,42 +378,42 @@ class AnnotationCreation extends Component {
   //   }
   // }
 
-  handleAnchorChange(event, newValue) {
-    const { anchorOptions } = this.state;
+  // handleAnchorChange(event, newValue) {
+  //   const { anchorOptions } = this.state;
 
-    // 1) Choose a color based on the recognition level
-    let nextFillColor = null;
-    if (newValue === "Pre-Iconographical") {
-      nextFillColor = "rgba(255, 0, 0, 0.3)"; // red-ish
-    } else if (newValue === "Iconographical") {
-      nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
-    } else if (newValue === "Iconological") {
-      nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
-    }
+  //   // 1) Choose a color based on the recognition level
+  //   let nextFillColor = null;
+  //   if (newValue === "Pre-Iconographical") {
+  //     nextFillColor = "rgba(255, 0, 0, 0.3)"; // red-ish
+  //   } else if (newValue === "Iconographical") {
+  //     nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
+  //   } else if (newValue === "Iconological") {
+  //     nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
+  //   }
 
-    // Example in AnnotationCreation.js, after picking color in handleAnchorChange
-    if (this.annotationDrawingRef?.current?.currentPath) {
-      this.annotationDrawingRef.current.currentPath.fillColor = nextFillColor;
-    }
-    // Re-export so your final SVG is updated with the new fill
-    if (this.annotationDrawingRef?.current?.reExportPaths) {
-      this.annotationDrawingRef.current.reExportPaths();
-    }
+  //   // Example in AnnotationCreation.js, after picking color in handleAnchorChange
+  //   if (this.annotationDrawingRef?.current?.currentPath) {
+  //     this.annotationDrawingRef.current.currentPath.fillColor = nextFillColor;
+  //   }
+  //   // Re-export so your final SVG is updated with the new fill
+  //   if (this.annotationDrawingRef?.current?.reExportPaths) {
+  //     this.annotationDrawingRef.current.reExportPaths();
+  //   }
 
-    // 2) Keep old logic to allow free text or reuse existing anchor
-    if (newValue && !anchorOptions.includes(newValue)) {
-      this.setState({
-        anchorOptions: [...anchorOptions, newValue],
-        anchorValue: newValue,
-        fillColor: nextFillColor, // set the fillColor
-      });
-    } else {
-      this.setState({
-        anchorValue: newValue,
-        fillColor: nextFillColor, // set the fillColor
-      });
-    }
-  }
+  //   // 2) Keep old logic to allow free text or reuse existing anchor
+  //   if (newValue && !anchorOptions.includes(newValue)) {
+  //     this.setState({
+  //       anchorOptions: [...anchorOptions, newValue],
+  //       anchorValue: newValue,
+  //       fillColor: nextFillColor, // set the fillColor
+  //     });
+  //   } else {
+  //     this.setState({
+  //       anchorValue: newValue,
+  //       fillColor: nextFillColor, // set the fillColor
+  //     });
+  //   }
+  // }
 
   handleEntityChange(event, newValue) {
     const { entityOptions } = this.state;
@@ -403,6 +451,37 @@ class AnnotationCreation extends Component {
     }
   }
 
+  handleRecognitionLevelChange = (event, newValue) => {
+    // 1) Derive the fill color based on the recognition level
+    let nextFillColor;
+    if (newValue === "Pre-Iconographical") {
+      nextFillColor = "rgba(255, 0, 0, 0.3)"; // red-ish
+    } else if (newValue === "Iconographical") {
+      nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
+    } else if (newValue === "Iconological") {
+      nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
+    } else {
+      nextFillColor = "rgba(255, 255, 255, 0.3)"; // fallback color
+    }
+
+    // 2) Update state so future shapes will use this new fill color
+    this.setState({
+      recognitionValue: newValue,
+      fillColor: nextFillColor,
+    });
+
+    // 3) Update the current shape in Paper.js
+    // If the user is *still* drawing a shape or has one selected, we can update its fill color
+    if (this.annotationDrawingRef?.current?.currentPath) {
+      this.annotationDrawingRef.current.currentPath.fillColor = nextFillColor;
+    }
+
+    // 4) Re-export paths so the final SVG (stored in `this.state.svg`) is updated
+    if (this.annotationDrawingRef?.current?.reExportPaths) {
+      this.annotationDrawingRef.current.reExportPaths();
+    }
+  };
+
   /** */
   render() {
     const { annotation, classes, closeCompanionWindow, id, windowId } =
@@ -417,6 +496,11 @@ class AnnotationCreation extends Component {
       authorValue,
       criterionOptions,
       criterionValue,
+      interpretationTypeOptions,
+      interpretationTypeValue,
+      expressionUri,
+      stageOptions,
+      stageValue,
       activeTool,
       colorPopoverOpen,
       currentColorType,
@@ -449,6 +533,7 @@ class AnnotationCreation extends Component {
           windowId={windowId}
         />
         <form onSubmit={this.submitForm} className={classes.section}>
+          {/* Target Tools */}
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="overline">Target</Typography>
@@ -501,6 +586,7 @@ class AnnotationCreation extends Component {
               </Paper>
             </Grid>
           </Grid>
+          {/* Style Tools */}
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="overline">Style</Typography>
@@ -562,28 +648,57 @@ class AnnotationCreation extends Component {
               }
             </Grid>
           </Grid>
+          {/* Level of Recognition */}
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="overline">Level of Recognition</Typography>
             </Grid>
             <Grid item xs={12}>
               <FormControl fullWidth>
-                {/* <InputLabel id="demo-simple-select-autowidth-label">
+                <Select
+                  labelId="recognition-level-label"
+                  id="recognition-level-select"
+                  value={this.state.recognitionValue}
+                  onChange={(event) => {
+                    this.handleRecognitionLevelChange(
+                      event,
+                      event.target.value
+                    );
+                  }}
+                >
+                  <MenuItem value="Pre-Iconographical">
+                    Pre-Iconographical
+                  </MenuItem>
+                  <MenuItem value="Iconographical">Iconographical</MenuItem>
+                  <MenuItem value="Iconological">Iconological</MenuItem>
+                </Select>
+              </FormControl>
+              <FormControl fullWidth>
+                {/* <InputLabel id="conceptual-level-label">
                 Conceptual Level
               </InputLabel> */}
-                <Select
-                  labelId="demo-simple-select-autowidth-label"
-                  id="demo-simple-select-autowidth"
+                {/* <Select
+                  labelId="conceptual-level-label"
+                  id="conceptual-level-select"
                   value={this.state.conceptualLevel}
                   onChange={this.handleChange}
                   autoWidth
                   label="Conceptual Level"
-                >
-                  <MenuItem value={"Work"}>Work</MenuItem>
+                > */}
+                {/* <MenuItem value={"Work"}>Work</MenuItem>
                   <MenuItem value={"Expression"}>Expression</MenuItem>
                   <MenuItem value={"Manifestation"}>Manifestation</MenuItem>
-                  <MenuItem value={"Item"}>Item</MenuItem>
-                </Select>
+                  <MenuItem value={"Item"}>Item</MenuItem> */}
+                {/* <MenuItem value={"Pre-Iconographical"}>
+                    Pre-Iconographical Recognition
+                  </MenuItem>
+                  <MenuItem value={"Iconographical"}>
+                    Iconographical Recognition
+                  </MenuItem>
+                  <MenuItem value={"Iconological"}>
+                    Iconological Recognition
+                  </MenuItem>
+                </Select> */}
               </FormControl>
             </Grid>
           </Grid>
@@ -592,55 +707,11 @@ class AnnotationCreation extends Component {
             orientation="horizontal"
             className={classes.divider}
           />
-          <Grid container>
+
+          {/* Interpretation Fields */}
+          <Grid container spacing={2}>
+            {/* Interpretative Criterion */}
             <Grid item xs={12}>
-              {/* <Typography variant="overline">Anchor</Typography> */}
-              <Autocomplete
-                freeSolo
-                size="small"
-                value={anchorValue}
-                onChange={this.handleAnchorChange}
-                options={anchorOptions}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    label="Create Anchor"
-                    fullWidth
-                  />
-                )}
-              />
-            </Grid>
-            <Divider
-              flexItem
-              orientation="horizontal"
-              className={classes.divider}
-            />
-            <Grid item xs={12}>
-              {/* <Typography variant="overline">Anchor</Typography> */}
-              <Autocomplete
-                freeSolo
-                size="small"
-                value={entityValue}
-                onChange={this.handleEntityChange}
-                options={entityOptions}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    label="Referenced Entity"
-                    fullWidth
-                  />
-                )}
-              />
-            </Grid>
-            <Divider
-              flexItem
-              orientation="horizontal"
-              className={classes.divider}
-            />
-            <Grid item xs={12}>
-              {/* <Typography variant="overline">Anchor</Typography> */}
               <Autocomplete
                 freeSolo
                 size="small"
@@ -657,35 +728,109 @@ class AnnotationCreation extends Component {
                 )}
               />
             </Grid>
+
             <Divider
               flexItem
               orientation="horizontal"
               className={classes.divider}
             />
+
+            {/* Expression URI */}
             <Grid item xs={12}>
-              {/* <Typography variant="overline">Anchor</Typography> */}
+              <TextField
+                variant="standard"
+                label="Expression URI"
+                fullWidth
+                value={expressionUri}
+                onChange={this.handleExpressionUriChange}
+                placeholder="https://example.org/expressions/12345"
+              />
+            </Grid>
+
+            <Divider
+              flexItem
+              orientation="horizontal"
+              className={classes.divider}
+            />
+
+            {/* Creator */}
+            <Grid item xs={12}>
               <Autocomplete
                 freeSolo
                 size="small"
                 value={authorValue}
-                onChange={this.handleAuthorChange}
+                onChange={this.handleCreatorChange}
                 options={authorOptions}
                 renderInput={(params) => (
                   <TextField
                     {...params}
                     variant="standard"
-                    label="Editor"
+                    label="Creator"
                     fullWidth
                   />
                 )}
               />
             </Grid>
+
             <Divider
               flexItem
               orientation="horizontal"
               className={classes.divider}
             />
+
+            {/* Interpretation Type */}
+            <Grid item xs={12}>
+              <Autocomplete
+                freeSolo
+                size="small"
+                value={interpretationTypeValue}
+                onChange={this.handleInterpretationTypeChange}
+                options={interpretationTypeOptions}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Interpretation Type"
+                    fullWidth
+                  />
+                )}
+              />
+            </Grid>
+
+            <Divider
+              flexItem
+              orientation="horizontal"
+              className={classes.divider}
+            />
+
+            {/* Stage Dropdown */}
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <Select
+                  labelId="stage-label"
+                  id="stage-select"
+                  value={stageValue}
+                  onChange={this.handleStageChange}
+                  autoWidth
+                  label="Stage"
+                >
+                  {stageOptions.map((stage) => (
+                    <MenuItem key={stage} value={stage}>
+                      {stage}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
           </Grid>
+
+          <Divider
+            flexItem
+            orientation="horizontal"
+            className={classes.divider}
+          />
+
+          {/* Content */}
           <Grid container>
             <Grid item xs={12}>
               <Typography variant="overline">Content</Typography>
@@ -699,10 +844,17 @@ class AnnotationCreation extends Component {
             </Grid>
           </Grid>
 
-          <Button onClick={closeCompanionWindow}>Cancel</Button>
-          <Button variant="contained" color="primary" type="submit">
-            Save
-          </Button>
+          {/* Action Buttons */}
+          <Grid container spacing={2} justifyContent="flex-end">
+            <Grid item>
+              <Button onClick={closeCompanionWindow}>Cancel</Button>
+            </Grid>
+            <Grid item>
+              <Button variant="contained" color="primary" type="submit">
+                Save
+              </Button>
+            </Grid>
+          </Grid>
         </form>
         <Popover
           open={lineWeightPopoverOpen}
