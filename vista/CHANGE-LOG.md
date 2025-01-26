@@ -1,5 +1,11 @@
 # 📑 Change log
 
+2025-26-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Installed `material-ui/lab` with `yarn add @material-ui/lab`.
+- Created `.env` to store global variables.
+- Updated `LocalStorageAdapter.js` with new classes and properties.
+
 2025-24-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
 - Refactored all plugins exports.

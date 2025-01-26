@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component } from "react";
 import PropTypes from "prop-types";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
@@ -6,9 +6,7 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-import PersonIcon from "@material-ui/icons/Person";
 // import PsychologyIcon from '@material-ui/icons/Psychology';
-import BookIcon from "@material-ui/icons/Book";
 import RectangleIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CircleIcon from "@material-ui/icons/RadioButtonUnchecked";
 import PolygonIcon from "@material-ui/icons/Timeline";
