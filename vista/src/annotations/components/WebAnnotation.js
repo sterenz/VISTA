@@ -12,6 +12,7 @@ export default class WebAnnotation {
     hasAnchor,
     wasGeneratedBy,
     creator,
+    hasStage,
   }) {
     this.id = id;
     this.canvasId = canvasId;
@@ -23,25 +24,25 @@ export default class WebAnnotation {
     this.hasAnchor = hasAnchor;
     this.wasGeneratedBy = wasGeneratedBy;
     this.creator = creator;
+    this.hasStage = hasStage;
   }
 
   // GOOD URIs: http://{domain}/{type}/{concept}/{reference}
 
-  /** */
   toJson() {
     return {
-      body: this.createBody(),
       id: this.id,
       motivation: "commenting",
+      body: this.createBody(),
       target: this.target(),
+      creator: this.creator,
       hasAnchor: this.hasAnchor,
       wasGeneratedBy: this.wasGeneratedBy,
-      creator: this.creator,
+      hasStage: this.hasStage,
       type: "Annotation",
     };
   }
 
-  /** */
   createBody() {
     let bodies = [];
     if (this.body) {
@@ -65,7 +66,6 @@ export default class WebAnnotation {
     return bodies;
   }
 
-  /** */
   target() {
     let target = this.canvasId;
     if (this.svg || this.xywh) {
@@ -94,7 +94,6 @@ export default class WebAnnotation {
     return target;
   }
 
-  /** */
   source() {
     let source = this.canvasId;
     if (this.manifestId) {

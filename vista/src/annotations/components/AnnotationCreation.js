@@ -6,7 +6,6 @@ import Paper from "@material-ui/core/Paper";
 import Grid from "@material-ui/core/Grid";
 import ToggleButton from "@material-ui/lab/ToggleButton";
 import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
-// import PsychologyIcon from '@material-ui/icons/Psychology';
 import RectangleIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CircleIcon from "@material-ui/icons/RadioButtonUnchecked";
 import PolygonIcon from "@material-ui/icons/Timeline";
@@ -108,9 +107,13 @@ class AnnotationCreation extends Component {
       recognitionValue: "", // New Field
       entityOptions: ["Manuscript Vat.gr.984", "Manuscript Vat.gr.985"],
       entityValue: "",
-      authorOptions: ["D. Surace", "M. F. Bocchi"],
-      authorValue: "",
-      criterionOptions: ["Diplomatic Transcription", "Paleographic Analysis"],
+      creatorOptions: ["D. Surace", "M. F. Bocchi"],
+      creatorValue: "",
+      criterionOptions: [
+        "Bibliography",
+        "Paleographic Analysis",
+        "Auction Attribution",
+      ],
       criterionValue: "",
       interpretationTypeOptions: ["Type A", "Type B", "Type C"], // New Field
       interpretationTypeValue: "", // New Field
@@ -142,8 +145,12 @@ class AnnotationCreation extends Component {
     //this.handleChange = this.handleChange.bind(this);
     //this.handleAnchorChange = this.handleAnchorChange.bind(this);
     this.handleEntityChange = this.handleEntityChange.bind(this);
-    this.handleAuthorChange = this.handleAuthorChange.bind(this);
+    this.handleCreatorChange = this.handleCreatorChange.bind(this);
     this.handleCriterionChange = this.handleCriterionChange.bind(this);
+    this.handleInterpretationTypeChange =
+      this.handleInterpretationTypeChange.bind(this);
+    this.handleExpressionUriChange = this.handleExpressionUriChange.bind(this);
+    this.handleStageChange = this.handleStageChange.bind(this);
   }
 
   handleCloseLineWeight(e) {
@@ -201,9 +208,9 @@ class AnnotationCreation extends Component {
       svg,
       //conceptualLevel,
       recognitionValue,
-      anchorValue,
+      //anchorValue,
       entityValue,
-      authorValue,
+      creatorValue,
       criterionValue,
       interpretationTypeValue,
       expressionUri,
@@ -240,49 +247,31 @@ class AnnotationCreation extends Component {
               }
             : "",
         },
-        creator: authorValue
+        creator: creatorValue
           ? {
-              id: `https://purl.archive.org/domain/mlao/creator/${authorValue
+              id: `https://purl.archive.org/domain/mlao/creator/${creatorValue
                 .toLowerCase()
                 .replaceAll(" ", "-")
                 .replaceAll(".", "")}`,
               type: "foaf:Person",
-              name: `${authorValue}`,
+              name: `${creatorValue}`,
             }
           : "",
-        // hasAnchor: conceptualLevel
-        //   ? {
-        //       label: `${anchorValue}`,
-        //       id: `https://purl.archive.org/domain/mlao/anchor/${anchorValue
-        //         .toLowerCase()
-        //         .replaceAll(" ", "-")}`, // https://digi.vatlib.it/iiif/MSS_Vat.gr.984/canvas/p0001
-        //       type: "Anchor",
-        //       hasConceptualLevel: {
-        //         id: `https://purl.archive.org/domain/mlao/${conceptualLevel}/${uuid()}`,
-        //         type: `${conceptualLevel}`,
-        //       },
-        //       isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
-        //         .toLowerCase()
-        //         .replaceAll(" ", "-")
-        //         .replaceAll(".", "")}`,
-        //     }
-        //   : "",
-        // hasConceptualLevel: {
-        //   id: `https://purl.archive.org/domain/mlao/conceptualLevel/${conceptualLevel
-        //     .toLowerCase()
-        //     .replaceAll(" ", "-")}`,
-        //   type: conceptualLevel, // e.g., "IconographicalRecognition"
-        // },
-        // If you intend to keep the older "hasConceptualLevel" in your data model,
-        // rename it to “hasRecognitionLevel” or something consistent:
-
-        hasRecognitionLevel: {
-          id: `https://purl.archive.org/domain/mlao/recognitionLevel/${recognitionValue
+        hasAnchor: {
+          label: `Recognition Level: ${recognitionValue}`,
+          id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
+          type: "mlao:Anchor",
+          hasConceptualLevel: {
+            id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
+              .toLowerCase()
+              .replaceAll(" ", "-")}`,
+            type: recognitionValue, // e.g., "Iconographical"
+          },
+          isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
             .toLowerCase()
-            .replaceAll(" ", "-")}`,
-          type: recognitionValue,
+            .replaceAll(" ", "-")
+            .replaceAll(".", "")}`, // TODO: Fix URI
         },
-        recognitionValue: this.state.recognitionValue,
         fillColor: this.state.fillColor,
         interpretationType: interpretationTypeValue
           ? {
@@ -295,7 +284,9 @@ class AnnotationCreation extends Component {
           : "",
         hasStage: stageValue
           ? {
-              id: `https://purl.archive.org/domain/mlao/stage/${stageValue.toLowerCase()}`,
+              id: `https://purl.archive.org/domain/mlao/stage/${stageValue
+                .toLowerCase()
+                .replaceAll(" ", "-")}`,
               type: "lisa:PublishingStage",
               label: stageValue,
             }
@@ -327,7 +318,7 @@ class AnnotationCreation extends Component {
       xywh: null,
       interpretationTypeValue: "",
       expressionUri: "",
-      stageValue: "Draft",
+      stageValue: "",
     });
 
     // **HERE** is where we finalize the path, so color changes won't affect it later
@@ -427,15 +418,15 @@ class AnnotationCreation extends Component {
     }
   }
 
-  handleAuthorChange(event, newValue) {
-    const { authorOptions } = this.state;
-    if (newValue && !authorOptions.includes(newValue)) {
+  handleCreatorChange(event, newValue) {
+    const { creatorOptions } = this.state;
+    if (newValue && !creatorOptions.includes(newValue)) {
       this.setState({
-        authorOptions: [...authorOptions, newValue],
-        authorValue: newValue,
+        creatorOptions: [...creatorOptions, newValue],
+        creatorValue: newValue,
       });
     } else {
-      this.setState({ authorValue: newValue });
+      this.setState({ creatorValue: newValue });
     }
   }
 
@@ -482,18 +473,47 @@ class AnnotationCreation extends Component {
     }
   };
 
+  handleInterpretationTypeChange(event, newValue) {
+    const { interpretationTypeOptions } = this.state;
+    if (newValue && !interpretationTypeOptions.includes(newValue)) {
+      this.setState({
+        interpretationTypeOptions: [...interpretationTypeOptions, newValue],
+        interpretationTypeValue: newValue,
+      });
+    } else {
+      this.setState({ interpretationTypeValue: newValue });
+    }
+  }
+
+  handleExpressionUriChange(event) {
+    this.setState({ expressionUri: event.target.value });
+    console.log("Expression URI:", event.target.value);
+  }
+
+  handleStageChange(event, newValue) {
+    const { stageOptions } = this.state;
+    if (newValue && !stageOptions.includes(newValue)) {
+      this.setState({
+        stageOptions: [...stageOptions, newValue],
+        stageValue: newValue,
+      });
+    } else {
+      this.setState({ stageValue: newValue });
+    }
+  }
+
   /** */
   render() {
     const { annotation, classes, closeCompanionWindow, id, windowId } =
       this.props;
 
     const {
-      anchorOptions,
-      anchorValue,
-      entityOptions,
-      entityValue,
-      authorOptions,
-      authorValue,
+      //anchorOptions,
+      //anchorValue,
+      //entityOptions,
+      //entityValue,
+      creatorOptions,
+      creatorValue,
       criterionOptions,
       criterionValue,
       interpretationTypeOptions,
@@ -758,9 +778,9 @@ class AnnotationCreation extends Component {
               <Autocomplete
                 freeSolo
                 size="small"
-                value={authorValue}
+                value={creatorValue}
                 onChange={this.handleCreatorChange}
-                options={authorOptions}
+                options={creatorOptions}
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -805,6 +825,23 @@ class AnnotationCreation extends Component {
 
             {/* Stage Dropdown */}
             <Grid item xs={12}>
+              <Autocomplete
+                freeSolo
+                size="small"
+                value={stageValue}
+                onChange={this.handleStageChange}
+                options={stageOptions}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="standard"
+                    label="Stage"
+                    fullWidth
+                  />
+                )}
+              />
+            </Grid>
+            {/* <Grid item xs={12}>
               <FormControl fullWidth>
                 <Select
                   labelId="stage-label"
@@ -821,7 +858,7 @@ class AnnotationCreation extends Component {
                   ))}
                 </Select>
               </FormControl>
-            </Grid>
+            </Grid> */}
           </Grid>
 
           <Divider
