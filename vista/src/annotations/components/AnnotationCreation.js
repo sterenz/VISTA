@@ -20,7 +20,7 @@ import FormatShapesIcon from "@material-ui/icons/FormatShapes";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
-import Select, { SelectChangeEvent } from "@material-ui/core/Select";
+import Select from "@material-ui/core/Select";
 import Popover from "@material-ui/core/Popover";
 import Divider from "@material-ui/core/Divider";
 import MenuItem from "@material-ui/core/MenuItem";
@@ -34,13 +34,6 @@ import AnnotationDrawing from "./AnnotationDrawing";
 import TextEditor from "./TextEditor";
 import WebAnnotation from "./WebAnnotation";
 import CursorIcon from "../icons/Cursor";
-import Accordion from "@material-ui/core/Accordion";
-import AccordionActions from "@material-ui/core/AccordionActions";
-import AccordionSummary from "@material-ui/core/AccordionSummary";
-import AccordionDetails from "@material-ui/core/AccordionDetails";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import AddIcon from "@material-ui/icons/Add";
-import RemoveIcon from "@material-ui/icons/Remove";
 
 /** */
 class AnnotationCreation extends Component {
@@ -206,9 +199,7 @@ class AnnotationCreation extends Component {
       tags,
       xywh,
       svg,
-      //conceptualLevel,
       recognitionValue,
-      //anchorValue,
       entityValue,
       creatorValue,
       criterionValue,
@@ -218,6 +209,8 @@ class AnnotationCreation extends Component {
       textEditorStateBustingKey,
     } = this.state;
 
+    const creationTime = new Date().toISOString(); // Add creationTime
+
     // Debug check: show final exported SVG
     console.log("Submitting annotation with SVG:", svg);
 
@@ -225,6 +218,7 @@ class AnnotationCreation extends Component {
       const storageAdapter = config.annotation.adapter(canvas.id);
       const anno = new WebAnnotation({
         body: annoBody,
+        created: { value: creationTime, type: "xsd:dateTime" },
         canvasId: canvas.id,
         id: (annotation && annotation.id) || `urn:uuid:${uuid()}`,
         manifestId: canvas.options.resource.id,
@@ -350,62 +344,6 @@ class AnnotationCreation extends Component {
     });
   }
 
-  // handleChange(event) {
-  //   console.log("EVENTO ----->", event);
-  //   this.setState({ conceptualLevel: event.target.value });
-  //   console.log(this.conceptualLevel);
-  // }
-
-  /** */
-  // handleAnchorChange(event, newValue) {
-  //   const { anchorOptions } = this.state;
-  //   if (newValue && !anchorOptions.includes(newValue)) {
-  //     this.setState({
-  //       anchorOptions: [...anchorOptions, newValue],
-  //       anchorValue: newValue,
-  //     });
-  //   } else {
-  //     this.setState({ anchorValue: newValue });
-  //   }
-  // }
-
-  // handleAnchorChange(event, newValue) {
-  //   const { anchorOptions } = this.state;
-
-  //   // 1) Choose a color based on the recognition level
-  //   let nextFillColor = null;
-  //   if (newValue === "Pre-Iconographical") {
-  //     nextFillColor = "rgba(255, 0, 0, 0.3)"; // red-ish
-  //   } else if (newValue === "Iconographical") {
-  //     nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
-  //   } else if (newValue === "Iconological") {
-  //     nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
-  //   }
-
-  //   // Example in AnnotationCreation.js, after picking color in handleAnchorChange
-  //   if (this.annotationDrawingRef?.current?.currentPath) {
-  //     this.annotationDrawingRef.current.currentPath.fillColor = nextFillColor;
-  //   }
-  //   // Re-export so your final SVG is updated with the new fill
-  //   if (this.annotationDrawingRef?.current?.reExportPaths) {
-  //     this.annotationDrawingRef.current.reExportPaths();
-  //   }
-
-  //   // 2) Keep old logic to allow free text or reuse existing anchor
-  //   if (newValue && !anchorOptions.includes(newValue)) {
-  //     this.setState({
-  //       anchorOptions: [...anchorOptions, newValue],
-  //       anchorValue: newValue,
-  //       fillColor: nextFillColor, // set the fillColor
-  //     });
-  //   } else {
-  //     this.setState({
-  //       anchorValue: newValue,
-  //       fillColor: nextFillColor, // set the fillColor
-  //     });
-  //   }
-  // }
-
   handleEntityChange(event, newValue) {
     const { entityOptions } = this.state;
     if (newValue && !entityOptions.includes(newValue)) {
@@ -502,16 +440,11 @@ class AnnotationCreation extends Component {
     }
   }
 
-  /** */
   render() {
     const { annotation, classes, closeCompanionWindow, id, windowId } =
       this.props;
 
     const {
-      //anchorOptions,
-      //anchorValue,
-      //entityOptions,
-      //entityValue,
       creatorOptions,
       creatorValue,
       criterionOptions,
@@ -693,33 +626,6 @@ class AnnotationCreation extends Component {
                   <MenuItem value="Iconological">Iconological</MenuItem>
                 </Select>
               </FormControl>
-              <FormControl fullWidth>
-                {/* <InputLabel id="conceptual-level-label">
-                Conceptual Level
-              </InputLabel> */}
-                {/* <Select
-                  labelId="conceptual-level-label"
-                  id="conceptual-level-select"
-                  value={this.state.conceptualLevel}
-                  onChange={this.handleChange}
-                  autoWidth
-                  label="Conceptual Level"
-                > */}
-                {/* <MenuItem value={"Work"}>Work</MenuItem>
-                  <MenuItem value={"Expression"}>Expression</MenuItem>
-                  <MenuItem value={"Manifestation"}>Manifestation</MenuItem>
-                  <MenuItem value={"Item"}>Item</MenuItem> */}
-                {/* <MenuItem value={"Pre-Iconographical"}>
-                    Pre-Iconographical Recognition
-                  </MenuItem>
-                  <MenuItem value={"Iconographical"}>
-                    Iconographical Recognition
-                  </MenuItem>
-                  <MenuItem value={"Iconological"}>
-                    Iconological Recognition
-                  </MenuItem>
-                </Select> */}
-              </FormControl>
             </Grid>
           </Grid>
           <Divider
@@ -841,24 +747,6 @@ class AnnotationCreation extends Component {
                 )}
               />
             </Grid>
-            {/* <Grid item xs={12}>
-              <FormControl fullWidth>
-                <Select
-                  labelId="stage-label"
-                  id="stage-select"
-                  value={stageValue}
-                  onChange={this.handleStageChange}
-                  autoWidth
-                  label="Stage"
-                >
-                  {stageOptions.map((stage) => (
-                    <MenuItem key={stage} value={stage}>
-                      {stage}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid> */}
           </Grid>
 
           <Divider
@@ -905,9 +793,9 @@ class AnnotationCreation extends Component {
                     key={option}
                     onClick={this.handleLineWeightSelect}
                     value={option}
-                    selected={option == strokeWidth}
+                    selected={option === strokeWidth}
                     role="option"
-                    aria-selected={option == strokeWidth}
+                    aria-selected={option === strokeWidth}
                   >
                     {option}
                   </MenuItem>

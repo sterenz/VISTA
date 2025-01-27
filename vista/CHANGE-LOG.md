@@ -1,7 +1,9 @@
 # 📑 Change log
 
-2025-26-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+2025-27-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Added `creationTime` in annotatation model.
+- Created `annotationHelpers.js` in `helpers` to fetch annotation's JSON form LocaleStorage.
 - Fixing `hasStage` logic in `AnnotationCreation.js` and `WebAnnotation.js`.
 - Reintroduced `hasAnchor` in creating the annotation JSON.
 

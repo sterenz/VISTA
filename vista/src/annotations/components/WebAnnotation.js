@@ -4,6 +4,7 @@ export default class WebAnnotation {
   constructor({
     canvasId,
     id,
+    created,
     xywh,
     body,
     tags,
@@ -15,6 +16,7 @@ export default class WebAnnotation {
     hasStage,
   }) {
     this.id = id;
+    this.created = created;
     this.canvasId = canvasId;
     this.xywh = xywh;
     this.body = body;
@@ -32,9 +34,10 @@ export default class WebAnnotation {
   toJson() {
     return {
       id: this.id,
-      motivation: "commenting",
+      created: this.created,
       body: this.createBody(),
       target: this.target(),
+      motivation: "commenting",
       creator: this.creator,
       hasAnchor: this.hasAnchor,
       wasGeneratedBy: this.wasGeneratedBy,
