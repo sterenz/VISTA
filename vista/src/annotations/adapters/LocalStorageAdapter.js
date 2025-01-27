@@ -1,8 +1,31 @@
 import jsonld from "jsonld";
 import axios from "axios";
+import AnnotationCollectionAdapter from "./AnnotationCollectionAdapter";
 
 // Configuration flag to toggle Blazegraph saving
 const SAVE_TO_BLAZEGRAPH = process.env.REACT_APP_SAVE_TO_BLAZEGRAPH === "true"; // Disabled in .env during development
+
+// // Initialize one global adapter
+// const globalCollectionAdapter = new AnnotationCollectionAdapter(
+//   undefined, // no explicit ID => auto-generate from PURL + number
+//   "myGlobalAnnotationCollection" // localStorage key
+// );
+
+// Potential approach to reuse the same dynamic ID across sessions:
+let storedId = localStorage.getItem("CURRENT_COLLECTION_ID");
+if (!storedId) {
+  // We want a new one, so create the adapter w/o an ID
+  const tempAdapter = new AnnotationCollectionAdapter(
+    undefined,
+    "myGlobalAnnotationCollection"
+  );
+  storedId = tempAdapter.collectionId;
+  localStorage.setItem("CURRENT_COLLECTION_ID", storedId);
+}
+const globalCollectionAdapter = new AnnotationCollectionAdapter(
+  storedId,
+  "myGlobalAnnotationCollection"
+);
 
 export default class LocalStorageAdapter {
   constructor(annotationPageId) {
@@ -16,6 +39,15 @@ export default class LocalStorageAdapter {
         "@context": this.getContext(),
         id: this.annotationPageId,
         type: "AnnotationPage",
+        // Key part: reference back to the global collection
+        "dct:isPartOf": [
+          {
+            id: globalCollectionAdapter.collectionId,
+            type: "AnnotationCollection",
+            // Optional: also inline label or total
+            label: { en: ["My Global Annotation Collection"] },
+          },
+        ],
         items: [],
       };
 
@@ -26,11 +58,15 @@ export default class LocalStorageAdapter {
 
       // Validate the annotation structure
       annotationPage.items.push(annotation);
+      // Store page
+
       localStorage.setItem(
         this.annotationPageId,
         JSON.stringify(annotationPage)
       );
       console.log("Updated Annotation Page:", annotationPage);
+
+      // Possibly store RDF
 
       const rdfData = await this.toRdf(annotationPage);
       if (rdfData) {
@@ -40,6 +76,9 @@ export default class LocalStorageAdapter {
           "RDF serialization failed. Annotation not saved to Blazegraph."
         );
       }
+
+      // Also add this page to the global collection
+      await globalCollectionAdapter.addAnnotationPage(this.annotationPageId);
 
       return annotationPage;
     } catch (error) {
@@ -141,11 +180,10 @@ export default class LocalStorageAdapter {
   // RDF serialization
   async toRdf(jsonLdData, format = "application/n-quads") {
     try {
-      const rdfData = await jsonld.toRDF(jsonLdData, { format: format });
-      return rdfData;
+      return await jsonld.toRDF(jsonLdData, { format });
     } catch (error) {
       console.error("Error converting JSON-LD to RDF:", error);
-      throw error; // Propagate the error for higher-level handling
+      throw error;
     }
   }
 
@@ -181,17 +219,24 @@ export default class LocalStorageAdapter {
   }
 
   // Fetching all annotations
+  // async all() {
+  //   try {
+  //     const data = localStorage.getItem(this.annotationPageId);
+  //     if (!data) {
+  //       return null;
+  //     }
+  //     return JSON.parse(data);
+  //   } catch (error) {
+  //     console.error("Error parsing annotation page from localStorage:", error);
+  //     return null;
+  //   }
+  // }
+
+  // Fetching all annotations with new structure annotation page new id !! NOT WORKING
   async all() {
-    try {
-      const data = localStorage.getItem(this.annotationPageId);
-      if (!data) {
-        return null;
-      }
-      return JSON.parse(data);
-    } catch (error) {
-      console.error("Error parsing annotation page from localStorage:", error);
-      return null;
-    }
+    const data = localStorage.getItem(this.annotationPageId);
+    if (!data) return null;
+    return JSON.parse(data);
   }
 
   // Define the @context based on your ontology

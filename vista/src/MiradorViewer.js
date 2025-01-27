@@ -13,15 +13,31 @@ import LocalStorageAdapter from "./annotations/adapters/LocalStorageAdapter";
 const MiradorViewer = () => {
   useEffect(() => {
     // Toggle which adapter you want to use:
-    const adapter = (canvasId) => new LocalStorageAdapter(canvasId); // <--- Uncomment to use local storage
+    //const adapter = (canvasId) => new LocalStorageAdapter(canvasId); // <--- Uncomment to use local storage
     //new SimpleAnnotationServerV2Adapter(canvasId, "http://localhost:8888/annotation"); // <--- Uncomment to use SAS
 
+    // Mirador configuration
     const config = {
       id: "vista-mirador",
+      // annotation: {
+      //   // Use whichever adapter is uncommented
+      //   adapter,
+      //   // Set to true to display annotation JSON export button
+      //   exportLocalStorageAnnotations: true,
+      // },
+      // ...vistaTheme, // Merge the theme configuration
+
       annotation: {
         // Use whichever adapter is uncommented
-        adapter,
-        // Set to true to display annotation JSON export button
+        adapter: (canvasId) => {
+          // If you want a consistent scheme:
+          // Canvas = ".../canvas/1"
+          // Page = ".../canvas/1/annotation-page"
+          const pageId = `${canvasId}/annotation-page`;
+
+          // Return your existing LocalStorageAdapter
+          return new LocalStorageAdapter(pageId);
+        }, // Set to true to display annotation JSON export button
         exportLocalStorageAnnotations: true,
       },
       ...vistaTheme, // Merge the theme configuration

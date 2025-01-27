@@ -2,6 +2,10 @@
 
 2025-27-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- ⚠️ Modified `MiradorViewer.js` to read new annotation page ID.
+- TODO: Fix the free-hand annotation drawing tool is causing a "multiple renders" warning.
+- Created a new ID generetor for annotation pages in const `annotationPageId`.
+- Created `AnnotationCollectionAdapter.js` to store Annotation Collections.
 - Added `creationTime` in annotatation model.
 - Created `annotationHelpers.js` in `helpers` to fetch annotation's JSON form LocaleStorage.
 - Fixing `hasStage` logic in `AnnotationCreation.js` and `WebAnnotation.js`.

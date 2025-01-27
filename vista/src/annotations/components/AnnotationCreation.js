@@ -135,8 +135,6 @@ class AnnotationCreation extends Component {
     this.handleCloseLineWeight = this.handleCloseLineWeight.bind(this);
     this.closeChooseColor = this.closeChooseColor.bind(this);
     this.updateStrokeColor = this.updateStrokeColor.bind(this);
-    //this.handleChange = this.handleChange.bind(this);
-    //this.handleAnchorChange = this.handleAnchorChange.bind(this);
     this.handleEntityChange = this.handleEntityChange.bind(this);
     this.handleCreatorChange = this.handleCreatorChange.bind(this);
     this.handleCriterionChange = this.handleCriterionChange.bind(this);
@@ -215,7 +213,10 @@ class AnnotationCreation extends Component {
     console.log("Submitting annotation with SVG:", svg);
 
     canvases.forEach((canvas) => {
-      const storageAdapter = config.annotation.adapter(canvas.id);
+      //const annotationPageId = `${canvas.id}/annotation-page`; // Creates a new ID for the annotation page with canvas id
+      const annotationPageId = `${canvas.id}`; // Creates a new ID for the annotation page with canvas id
+
+      const storageAdapter = config.annotation.adapter(annotationPageId);
       const anno = new WebAnnotation({
         body: annoBody,
         created: { value: creationTime, type: "xsd:dateTime" },
