@@ -16,7 +16,7 @@ import FormatColorFillIcon from "@material-ui/icons/FormatColorFill";
 import StrokeColorIcon from "@material-ui/icons/BorderColor";
 import LineWeightIcon from "@material-ui/icons/LineWeight";
 import ArrowDropDownIcon from "@material-ui/icons/ArrowDropDown";
-import FormatShapesIcon from "@material-ui/icons/FormatShapes";
+//import FormatShapesIcon from "@material-ui/icons/FormatShapes";
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import FormControl from "@material-ui/core/FormControl";
@@ -41,12 +41,30 @@ class AnnotationCreation extends Component {
   constructor(props) {
     console.log("PROPS --->", props);
     super(props);
+    console.log("[DEBUG] Received annotation:", props.annotation);
+
+    // NEW: Default form state
+    this.state = {
+      recognitionValue: "",
+      creatorValue: "",
+      criterionValue: "",
+      interpretationTypeValue: "",
+      stageValue: "",
+      expressionUri: "",
+      fillColor: null,
+      svg: null,
+      annoBody: "",
+      // plus any defaults...
+    };
 
     // Create a ref to access AnnotationDrawing's instance methods
     this.annotationDrawingRef = React.createRef();
 
     const annoState = {};
+
     if (props.annotation) {
+      console.log("FIRST DEBUG annotation => ", props.annotation);
+
       if (Array.isArray(props.annotation.body)) {
         annoState.tags = [];
         props.annotation.body.forEach((body) => {
@@ -69,15 +87,90 @@ class AnnotationCreation extends Component {
             }
           });
         }
-        if (props.annotation.recognitionValue) {
-          annoState.recognitionValue = props.annotation.recognitionValue;
-        }
+        // if (props.annotation.recognitionValue) {
+        //   annoState.recognitionValue = props.annotation.recognitionValue;
+        // }
         if (props.annotation.fillColor) {
           annoState.fillColor = props.annotation.fillColor;
         } else {
           annoState.svg = props.annotation.target.selector.value;
         }
       }
+    }
+
+    // NEW: If editing an existing annotation:
+    if (props.annotation) {
+      console.log("DEBUG annotation => ", props.annotation);
+
+      const { annotation } = props;
+
+      // Body text
+      if (annotation.body?.value) {
+        annoState.annoBody = annotation.body.value;
+      }
+      // Creator
+      if (annotation.creator?.name) {
+        annoState.creatorValue = annotation.creator.name;
+      }
+
+      // Recognition
+      if (annotation.hasAnchor?.hasConceptualLevel?.type) {
+        const levelType = annotation.hasAnchor.hasConceptualLevel.type;
+        annoState.recognitionValue = levelType;
+
+        // Also pick a color if you want the shape to be recolored
+        if (levelType === "Pre-Iconographical") {
+          annoState.fillColor = "rgba(255,0,0,0.2)";
+        } else if (levelType === "Iconographical") {
+          annoState.fillColor = "rgba(0,255,0,0.2)";
+        } else if (levelType === "Iconological") {
+          annoState.fillColor = "rgba(0,0,255,0.2)";
+        }
+        // etc.
+      }
+
+      // Interpretation Criterion
+      if (
+        annotation.wasGeneratedBy &&
+        annotation.wasGeneratedBy.hasInterpretationCriterion
+      ) {
+        // If each criterion has an ID like "...criterion/bibliography"
+        // we might parse the last segment or do a safe fallback:
+        const critId = annotation.wasGeneratedBy.hasInterpretationCriterion.id;
+        const lastSlash = critId.lastIndexOf("/");
+        const critName = critId.substring(lastSlash + 1);
+        annoState.criterionValue = critName;
+      }
+
+      // Stage
+      if (annotation.hasStage?.label) {
+        annoState.stageValue = annotation.hasStage.label;
+      }
+
+      // Expression URI, if stored
+      if (
+        annotation.wasGeneratedBy &&
+        annotation.wasGeneratedBy.isExtractedFrom
+      ) {
+        annoState.expressionUri = annotation.wasGeneratedBy.isExtractedFrom.id;
+      }
+
+      // Existing geometry (SVG) => update 'svg'
+      if (
+        annotation.target &&
+        annotation.target.selector &&
+        annotation.target.selector.type === "SvgSelector"
+      ) {
+        annoState.svg = annotation.target.selector.value;
+      }
+
+      // Interpretation Type //TODO: UNDERSTAND IF NEEDED AND IN CASE FIX IT IN EDIT
+      if (annotation.interpretationTypeValue?.label) {
+        annoState.interpretationTypeValue =
+          annotation.interpretationTypeValue.label;
+      }
+
+      // etc. parse any other fields you want
     }
 
     const toolState = {
@@ -385,13 +478,13 @@ class AnnotationCreation extends Component {
     // 1) Derive the fill color based on the recognition level
     let nextFillColor;
     if (newValue === "Pre-Iconographical") {
-      nextFillColor = "rgba(255, 0, 0, 0.3)"; // red-ish
+      nextFillColor = "rgba(255, 0, 0, 0.2)"; // red-ish
     } else if (newValue === "Iconographical") {
-      nextFillColor = "rgba(0, 255, 0, 0.3)"; // green-ish
+      nextFillColor = "rgba(0, 255, 0, 0.2)"; // green-ish
     } else if (newValue === "Iconological") {
-      nextFillColor = "rgba(0, 0, 255, 0.3)"; // blue-ish
+      nextFillColor = "rgba(0, 0, 255, 0.2)"; // blue-ish
     } else {
-      nextFillColor = "rgba(255, 255, 255, 0.3)"; // fallback color
+      nextFillColor = "rgba(255, 255, 255, 0.2)"; // fallback color
     }
 
     // 2) Update state so future shapes will use this new fill color
@@ -447,12 +540,12 @@ class AnnotationCreation extends Component {
 
     const {
       creatorOptions,
-      creatorValue,
+      //creatorValue,
       criterionOptions,
-      criterionValue,
+      //criterionValue,
       interpretationTypeOptions,
-      interpretationTypeValue,
-      expressionUri,
+      //interpretationTypeValue,
+      //expressionUri,
       stageOptions,
       stageValue,
       activeTool,
@@ -506,9 +599,9 @@ class AnnotationCreation extends Component {
                   <ToggleButton value="cursor" aria-label="select cursor">
                     <CursorIcon />
                   </ToggleButton>
-                  <ToggleButton value="edit" aria-label="select cursor">
+                  {/* <ToggleButton value="edit" aria-label="select cursor">
                     <FormatShapesIcon />
-                  </ToggleButton>
+                  </ToggleButton> */}
                 </ToggleButtonGroup>
                 <Divider
                   flexItem
@@ -642,7 +735,7 @@ class AnnotationCreation extends Component {
               <Autocomplete
                 freeSolo
                 size="small"
-                value={criterionValue}
+                value={this.state.criterionValue}
                 onChange={this.handleCriterionChange}
                 options={criterionOptions}
                 renderInput={(params) => (
@@ -668,7 +761,7 @@ class AnnotationCreation extends Component {
                 variant="standard"
                 label="Expression URI"
                 fullWidth
-                value={expressionUri}
+                value={this.state.expressionUri}
                 onChange={this.handleExpressionUriChange}
                 placeholder="https://example.org/expressions/12345"
               />
@@ -685,7 +778,7 @@ class AnnotationCreation extends Component {
               <Autocomplete
                 freeSolo
                 size="small"
-                value={creatorValue}
+                value={this.state.creatorValue}
                 onChange={this.handleCreatorChange}
                 options={creatorOptions}
                 renderInput={(params) => (
@@ -710,7 +803,7 @@ class AnnotationCreation extends Component {
               <Autocomplete
                 freeSolo
                 size="small"
-                value={interpretationTypeValue}
+                value={this.state.interpretationTypeValue}
                 onChange={this.handleInterpretationTypeChange}
                 options={interpretationTypeOptions}
                 renderInput={(params) => (

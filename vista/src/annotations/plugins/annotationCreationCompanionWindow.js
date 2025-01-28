@@ -13,31 +13,42 @@ const mapDispatchToProps = (dispatch, { id, windowId }) => ({
 
 /** */
 function mapStateToProps(state, { id: companionWindowId, windowId }) {
+  // Retrieve annotationid from the companion window's props in state
   const { annotationid } = getCompanionWindow(state, {
     companionWindowId,
     windowId,
   });
+
+  // Get the canvases for this window
   const canvases = getVisibleCanvases(state, { windowId });
 
-  let annotation;
+  // Brute-force search among all annotation pages
+  let annotation = null;
   canvases.forEach((canvas) => {
     const annotationsOnCanvas = state.annotations[canvas.id];
-    Object.values(annotationsOnCanvas || {}).forEach((value, i) => {
-      if (value.json && value.json.items) {
-        annotation = value.json.items.find((anno) => anno.id === annotationid);
+    if (!annotationsOnCanvas) return;
+
+    // each key in annotationsOnCanvas = annotationPageId
+    // each value = { json: { items: [...] } }
+    Object.values(annotationsOnCanvas).forEach((pageResource) => {
+      if (pageResource.json && pageResource.json.items) {
+        const found = pageResource.json.items.find(
+          (anno) => anno.id === annotationid
+        );
+        if (found) annotation = found;
       }
     });
   });
 
   return {
-    annotation,
-    canvases,
-    config: state.config,
+    annotation, // This goes into props.annotation in AnnotationCreation
+    canvases, // So we know which canvases to update
+    config: state.config, // So AnnotationCreation can read config.annotation.adapter, etc.
   };
 }
 
 const annotationCreationConfig = {
-  companionWindowKey: "annotationCreation",
+  companionWindowKey: "annotationCreation", // or whichever key it's using
   component: AnnotationCreation,
   mapDispatchToProps,
   mapStateToProps,

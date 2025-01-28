@@ -34,7 +34,7 @@ class CanvasListItem extends Component {
     });
   }
 
-  /** */
+  // This tells Mirador: “Open a companion window with the content type = annotationCreation and props = { annotationid, position: 'right' }.”
   handleEdit() {
     const { addCompanionWindow, canvases, annotationsOnCanvases } =
       this.context;

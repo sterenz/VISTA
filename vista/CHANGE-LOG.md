@@ -1,5 +1,11 @@
 # 📑 Change log
 
+2025-28-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Fixed state recognition in annotation edit mode. Now the UI display the fields of the annotation.
+  `annotationCreationCompanionWindow.js` reads all the keys in annotation oobject;
+  `AnnotationCreation.js` now uses a single local object `annoState` to store everything.
+
 2025-27-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
 - ⚠️ Modified `MiradorViewer.js` to read new annotation page ID.
