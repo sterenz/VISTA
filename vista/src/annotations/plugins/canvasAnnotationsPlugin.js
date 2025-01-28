@@ -43,7 +43,7 @@ class CanvasAnnotationsWrapper extends Component {
     const { singleCanvasDialogOpen } = this.state;
     const props = {
       ...targetProps,
-      listContainerComponent: CanvasListItem,
+      listContainerComponent: CanvasListItem, //Mirador’s default annotation listing then calls CanvasListItem for each annotation. That’s how annootation <li> is rendered in the left sidebar.
     };
     return (
       <AnnotationActionsContext.Provider
@@ -132,6 +132,7 @@ const mapDispatchToProps = (dispatch, props) => ({
     dispatch(actions.setWindowViewType(props.targetProps.windowId, "single")),
 });
 
+// Wraps CanvasAnnotations and tells Mirador
 const canvasAnnotationsPluginConfig = {
   component: CanvasAnnotationsWrapper,
   mapDispatchToProps,

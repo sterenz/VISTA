@@ -2,9 +2,15 @@
 
 2025-28-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Tested conditional rendering of annotation list item in `CanvasListItem.js` (stage colored left border).
+- `canvasAnnotationPlugin.js` wraps default Mirador annotation list.
+- Added render of metadata (creator, stage and URI) in annotations list (left sidebar) in `CanvasListItem.js`.
+- Implemented fetching LocalStorage in `ScatterPlot.js`.
+  TODO: Add Level of Recognition connections into data model.
 - Fixed state recognition in annotation edit mode. Now the UI display the fields of the annotation.
-  `annotationCreationCompanionWindow.js` reads all the keys in annotation oobject;
+  `annotationCreationCompanionWindow.js` reads all the keys in annotation object;
   `AnnotationCreation.js` now uses a single local object `annoState` to store everything.
+- TODO: Understand if needed the re-render of svg based on the edited fields.
 
 2025-27-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 

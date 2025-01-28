@@ -21,3 +21,17 @@
 /* nav.MuiPaper-root.MuiAppBar-root.MuiAppBar-positionAbsolute.MuiAppBar-colorDefault.WithPlugins\(WorkspaceControlPanel\)-root-5.mirador-workspace-control-panel {
   display: none;
 } */
+
+.annotation-item {
+  font-size: 16px;
+  border-bottom: 1px solid salmon;
+}
+
+.annotation-item span span p {
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.annotation-metadata {
+  padding-bottom: 8px;
+}

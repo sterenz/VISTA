@@ -35,6 +35,7 @@ export const vistaTheme = {
         },
         section_divider: "rgba(0, 0, 0, 0.25)", // Divider color
         annotations: {
+          // Annotation colors
           hidden: {
             globalAlpha: 0,
           },
@@ -43,7 +44,7 @@ export const vistaTheme = {
             globalAlpha: 1,
           },
           hovered: {
-            strokeStyle: "#BF00FF",
+            strokeStyle: "#000000",
             globalAlpha: 1,
           },
           selected: {

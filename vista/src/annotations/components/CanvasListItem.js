@@ -7,9 +7,7 @@ import ToggleButtonGroup from "@material-ui/lab/ToggleButtonGroup";
 import flatten from "lodash/flatten";
 import AnnotationActionsContext from "./AnnotationActionsContext";
 
-/** */
 class CanvasListItem extends Component {
-  /** */
   constructor(props) {
     super(props);
 
@@ -22,10 +20,16 @@ class CanvasListItem extends Component {
     this.handleEdit = this.handleEdit.bind(this);
   }
 
-  /** */
+  handleMouseHover() {
+    this.setState((prevState) => ({
+      isHovering: !prevState.isHovering,
+    }));
+  }
+
   handleDelete() {
-    const { canvases, receiveAnnotation, storageAdapter } = this.context;
     const { annotationid } = this.props;
+    const { canvases, receiveAnnotation, storageAdapter } = this.context;
+
     canvases.forEach((canvas) => {
       const adapter = storageAdapter(canvas.id);
       adapter.delete(annotationid).then((annoPage) => {
@@ -36,9 +40,9 @@ class CanvasListItem extends Component {
 
   // This tells Mirador: “Open a companion window with the content type = annotationCreation and props = { annotationid, position: 'right' }.”
   handleEdit() {
+    const { annotationid } = this.props;
     const { addCompanionWindow, canvases, annotationsOnCanvases } =
       this.context;
-    const { annotationid } = this.props;
     let annotation;
     canvases.some((canvas) => {
       if (annotationsOnCanvases[canvas.id]) {
@@ -54,23 +58,17 @@ class CanvasListItem extends Component {
       }
       return annotation;
     });
+    // Now we have `annotation`. Then open the edit window:
     addCompanionWindow("annotationCreation", {
       annotationid,
       position: "right",
     });
   }
 
-  /** */
-  handleMouseHover() {
-    this.setState((prevState) => ({
-      isHovering: !prevState.isHovering,
-    }));
-  }
-
-  /** */
+  // Checks if user can edit
   editable() {
-    const { annotationsOnCanvases, canvases } = this.context;
     const { annotationid } = this.props;
+    const { annotationsOnCanvases, canvases } = this.context;
     const annoIds = canvases.map((canvas) => {
       if (annotationsOnCanvases[canvas.id]) {
         return flatten(
@@ -91,9 +89,59 @@ class CanvasListItem extends Component {
 
   /** */
   render() {
-    const { children } = this.props;
+    const { children, annotationid } = this.props;
     const { isHovering } = this.state;
-    const { windowViewType, toggleSingleCanvasDialogOpen } = this.context;
+    const {
+      windowViewType,
+      toggleSingleCanvasDialogOpen,
+      canvases,
+      annotationsOnCanvases,
+    } = this.context;
+
+    // 1) Retrieve the full annotation object (similar to handleEdit logic)
+    let annotation;
+    canvases.some((canvas) => {
+      const data = annotationsOnCanvases[canvas.id];
+      if (!data) return false;
+      Object.values(data).forEach((value) => {
+        if (value.json && value.json.items) {
+          const found = value.json.items.find((a) => a.id === annotationid);
+          if (found) annotation = found;
+        }
+      });
+      return !!annotation;
+    });
+
+    // Extract stage
+
+    const stageLabel = annotation?.hasStage?.label || "No Stage";
+
+    // Create a small dictionary of stage => color
+    let stageColor = "#DDD"; // default or fallback color
+    switch (stageLabel) {
+      case "Draft":
+        stageColor = "orange";
+        break;
+      case "Published":
+        stageColor = "green";
+        break;
+      case "Deprecated":
+        stageColor = "gray";
+        break;
+      // Add more cases if needed
+      default:
+        stageColor = "#AAA";
+    }
+
+    // Extract the fields
+    const creatorName = annotation?.creator?.name || "Unknown";
+    // const stageLabel = annotation?.hasStage?.label || "No Stage";
+    const interpretationCriterion =
+      annotation?.wasGeneratedBy?.hasInterpretationCriterion.id || "";
+
+    const expressionUri = annotation?.wasGeneratedBy?.isExtractedFrom?.id || "";
+    // add more as needed
+
     return (
       <div
         onMouseEnter={this.handleMouseHover}
@@ -137,9 +185,33 @@ class CanvasListItem extends Component {
           </div>
         )}
         <li
-          {...this.props} // eslint-disable-line react/jsx-props-no-spreading
+          {...this.props}
+          style={{
+            borderLeft: `4px solid ${stageColor}`,
+            marginLeft: "0.5rem",
+            paddingLeft: "0.25rem",
+          }}
+          className="annotation-item"
         >
+          {/* 3) Display extra metadata after the children */}
+          {/* The default body content that Mirador passes as children */}
           {children}
+          <div className="annotation-metadata">
+            <strong>Creator:</strong> {creatorName}
+          </div>
+          <div className="annotation-metadata">
+            <strong>Stage:</strong> {stageLabel}
+          </div>
+          {interpretationCriterion && (
+            <div className="annotation-metadata">
+              <strong>Criterion:</strong> {interpretationCriterion}
+            </div>
+          )}
+          {expressionUri && (
+            <div className="annotation-metadata">
+              <strong>Expression URI:</strong> {expressionUri}
+            </div>
+          )}
         </li>
       </div>
     );
