@@ -2,6 +2,9 @@
 
 2025-28-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Added `disagreeWith` in `WebAnnotation.js`.
+- Created `addInterpretation` logic in `AnnotationCreation.js`.
+  Now when editing an annotation it takes same target as the previous one adding `cito:disagreeWith` property.
 - Tested conditional rendering of annotation list item in `CanvasListItem.js` (stage colored left border).
 - `canvasAnnotationPlugin.js` wraps default Mirador annotation list.
 - Added render of metadata (creator, stage and URI) in annotations list (left sidebar) in `CanvasListItem.js`.

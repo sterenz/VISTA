@@ -43,6 +43,9 @@ class AnnotationCreation extends Component {
     super(props);
     console.log("[DEBUG] Received annotation:", props.annotation);
 
+    // Bind addInterpretation in Constructor
+    this.addInterpretation = this.addInterpretation.bind(this);
+
     // NEW: Default form state
     this.state = {
       recognitionValue: "",
@@ -54,6 +57,8 @@ class AnnotationCreation extends Component {
       fillColor: null,
       svg: null,
       annoBody: "",
+      isForked: false,
+      forkOriginalId: null,
       // plus any defaults...
     };
 
@@ -170,7 +175,7 @@ class AnnotationCreation extends Component {
           annotation.interpretationTypeValue.label;
       }
 
-      // etc. parse any other fields you want
+      // etc. parse any other fields needed
     }
 
     const toolState = {
@@ -286,6 +291,8 @@ class AnnotationCreation extends Component {
     e.preventDefault();
     const { annotation, canvases, receiveAnnotation, config } = this.props;
     const {
+      isForked,
+      forkOriginalId,
       annoBody,
       tags,
       xywh,
@@ -306,82 +313,163 @@ class AnnotationCreation extends Component {
     console.log("Submitting annotation with SVG:", svg);
 
     canvases.forEach((canvas) => {
-      //const annotationPageId = `${canvas.id}/annotation-page`; // Creates a new ID for the annotation page with canvas id
-      const annotationPageId = `${canvas.id}`; // Creates a new ID for the annotation page with canvas id
-
+      const annotationPageId = `${canvas.id}`;
       const storageAdapter = config.annotation.adapter(annotationPageId);
-      const anno = new WebAnnotation({
-        body: annoBody,
-        created: { value: creationTime, type: "xsd:dateTime" },
-        canvasId: canvas.id,
-        id: (annotation && annotation.id) || `urn:uuid:${uuid()}`,
-        manifestId: canvas.options.resource.id,
-        svg,
-        tags,
-        xywh,
-        wasGeneratedBy: {
-          id: `https://purl.archive.org/domain/mlao/interpretation/${uuid()}`,
-          type: "hico:InterpretationAct",
-          hasInterpretationCriterion: {
-            id: `https://purl.archive.org/domain/mlao/interpretation/criterion/${criterionValue
-              .toLowerCase()
-              .replaceAll(" ", "-")}`,
-            type: "hico:InterpretationCriterion",
+
+      let newAnno;
+      if (isForked) {
+        // We are creating a brand-new annotation that "disagrees with" the old one
+        newAnno = new WebAnnotation({
+          // new ID
+          id: `urn:uuid:${uuid()}`,
+          created: { value: creationTime, type: "xsd:dateTime" },
+          canvasId: canvas.id,
+          manifestId: canvas.options.resource.id,
+          svg,
+          xywh,
+          //fillColor,
+          body: annoBody,
+          // Possibly pass new interpretation fields
+          wasGeneratedBy: {
+            id: `https://purl.archive.org/domain/mlao/interpretation/${uuid()}`,
+            type: "hico:InterpretationAct",
+            hasInterpretationCriterion: {
+              id: `https://purl.archive.org/domain/mlao/interpretation/criterion/${criterionValue
+                .toLowerCase()
+                .replaceAll(" ", "-")}`,
+              type: "hico:InterpretationCriterion",
+            },
+            isExtractedFrom: expressionUri
+              ? {
+                  id: expressionUri,
+                  type: "lrm:F2_Expression",
+                }
+              : "",
           },
-          isExtractedFrom: expressionUri
+          creator: creatorValue
             ? {
-                id: expressionUri, // Assuming the user pastes a valid URI
-                type: "lrm:F2_Expression",
+                id: `https://purl.archive.org/domain/mlao/creator/${creatorValue
+                  .toLowerCase()
+                  .replaceAll(" ", "-")
+                  .replaceAll(".", "")}`,
+                type: "foaf:Person",
+                name: `${creatorValue}`,
               }
             : "",
-        },
-        creator: creatorValue
-          ? {
-              id: `https://purl.archive.org/domain/mlao/creator/${creatorValue
+          hasAnchor: {
+            label: `Recognition Level: ${recognitionValue}`,
+            id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
+            type: "mlao:Anchor",
+            hasConceptualLevel: {
+              id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
-                .replaceAll(" ", "-")
-                .replaceAll(".", "")}`,
-              type: "foaf:Person",
-              name: `${creatorValue}`,
-            }
-          : "",
-        hasAnchor: {
-          label: `Recognition Level: ${recognitionValue}`,
-          id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
-          type: "mlao:Anchor",
-          hasConceptualLevel: {
-            id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
+                .replaceAll(" ", "-")}`,
+              type: recognitionValue,
+            },
+            isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
               .toLowerCase()
-              .replaceAll(" ", "-")}`,
-            type: recognitionValue, // e.g., "Iconographical"
+              .replaceAll(" ", "-")
+              .replaceAll(".", "")}`,
           },
-          isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
-            .toLowerCase()
-            .replaceAll(" ", "-")
-            .replaceAll(".", "")}`, // TODO: Fix URI
-        },
-        fillColor: this.state.fillColor,
-        interpretationType: interpretationTypeValue
-          ? {
-              id: `https://purl.archive.org/domain/mlao/interpretation/type/${interpretationTypeValue
+          interpretationType: interpretationTypeValue
+            ? {
+                id: `https://purl.archive.org/domain/mlao/interpretation/type/${interpretationTypeValue
+                  .toLowerCase()
+                  .replaceAll(" ", "-")}`,
+                type: "hico:InterpretationType",
+                label: interpretationTypeValue,
+              }
+            : "",
+          hasStage: stageValue
+            ? {
+                id: `https://purl.archive.org/domain/mlao/stage/${stageValue
+                  .toLowerCase()
+                  .replaceAll(" ", "-")}`,
+                type: "lisa:PublishingStage",
+                label: stageValue,
+              }
+            : "",
+          // The "disagreeWith" link
+          disagreeWith: forkOriginalId, // or cito:disagreesWith, if context is set
+        }).toJson();
+      } else {
+        // Normal update or creation of the existing annotation
+        newAnno = new WebAnnotation({
+          body: annoBody,
+          created: { value: creationTime, type: "xsd:dateTime" },
+          canvasId: canvas.id,
+          id: (annotation && annotation.id) || `urn:uuid:${uuid()}`,
+          manifestId: canvas.options.resource.id,
+          svg,
+          tags,
+          xywh,
+          wasGeneratedBy: {
+            id: `https://purl.archive.org/domain/mlao/interpretation/${uuid()}`,
+            type: "hico:InterpretationAct",
+            hasInterpretationCriterion: {
+              id: `https://purl.archive.org/domain/mlao/interpretation/criterion/${criterionValue
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: "hico:InterpretationType",
-              label: interpretationTypeValue,
-            }
-          : "",
-        hasStage: stageValue
-          ? {
-              id: `https://purl.archive.org/domain/mlao/stage/${stageValue
+              type: "hico:InterpretationCriterion",
+            },
+            isExtractedFrom: expressionUri
+              ? {
+                  id: expressionUri, // Assuming the user pastes a valid URI
+                  type: "lrm:F2_Expression",
+                }
+              : "",
+          },
+          creator: creatorValue
+            ? {
+                id: `https://purl.archive.org/domain/mlao/creator/${creatorValue
+                  .toLowerCase()
+                  .replaceAll(" ", "-")
+                  .replaceAll(".", "")}`,
+                type: "foaf:Person",
+                name: `${creatorValue}`,
+              }
+            : "",
+          hasAnchor: {
+            label: `Recognition Level: ${recognitionValue}`,
+            id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
+            type: "mlao:Anchor",
+            hasConceptualLevel: {
+              id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: "lisa:PublishingStage",
-              label: stageValue,
-            }
-          : "",
-      }).toJson();
-      if (annotation) {
-        storageAdapter.update(anno).then((annoPage) => {
+              type: recognitionValue, // e.g., "Iconographical"
+            },
+            isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
+              .toLowerCase()
+              .replaceAll(" ", "-")
+              .replaceAll(".", "")}`, // TODO: Fix URI
+          },
+          fillColor: this.state.fillColor,
+          interpretationType: interpretationTypeValue
+            ? {
+                id: `https://purl.archive.org/domain/mlao/interpretation/type/${interpretationTypeValue
+                  .toLowerCase()
+                  .replaceAll(" ", "-")}`,
+                type: "hico:InterpretationType",
+                label: interpretationTypeValue,
+              }
+            : "",
+          hasStage: stageValue
+            ? {
+                id: `https://purl.archive.org/domain/mlao/stage/${stageValue
+                  .toLowerCase()
+                  .replaceAll(" ", "-")}`,
+                type: "lisa:PublishingStage",
+                label: stageValue,
+              }
+            : "",
+        }).toJson();
+      }
+
+      // Decide if we update or create
+      if (!isForked && annotation) {
+        // old path: update existing annotation
+        storageAdapter.update(newAnno).then((annoPage) => {
           receiveAnnotation(
             canvas.id,
             storageAdapter.annotationPageId,
@@ -389,7 +477,8 @@ class AnnotationCreation extends Component {
           );
         });
       } else {
-        storageAdapter.create(anno).then((annoPage) => {
+        // brand new annotation
+        storageAdapter.create(newAnno).then((annoPage) => {
           receiveAnnotation(
             canvas.id,
             storageAdapter.annotationPageId,
@@ -400,13 +489,15 @@ class AnnotationCreation extends Component {
     });
 
     this.setState({
+      isForked: false,
+      forkOriginalId: null,
       annoBody: "",
       svg: null,
-      textEditorStateBustingKey: textEditorStateBustingKey + 1,
       xywh: null,
       interpretationTypeValue: "",
       expressionUri: "",
       stageValue: "",
+      textEditorStateBustingKey: textEditorStateBustingKey + 1,
     });
 
     // **HERE** is where we finalize the path, so color changes won't affect it later
@@ -533,6 +624,26 @@ class AnnotationCreation extends Component {
       this.setState({ stageValue: newValue });
     }
   }
+
+  // Make addInterpretation an arrow function
+  addInterpretation = () => {
+    const { annotation } = this.props;
+    if (!annotation) return;
+
+    const { svg, xywh, fillColor } = this.state;
+
+    this.setState({
+      isForked: true,
+      forkOriginalId: annotation.id,
+      //recognitionValue: "",
+      // keep geometry, reset textual fields
+      annoBody: "",
+      creatorValue: "",
+      stageValue: "",
+      expressionUri: "",
+      interpretationTypeValue: "",
+    });
+  };
 
   render() {
     const { annotation, classes, closeCompanionWindow, id, windowId } =
@@ -862,6 +973,20 @@ class AnnotationCreation extends Component {
               />
             </Grid>
           </Grid>
+          {/* Add interpretation Button - show it just in edit mode */}
+          {annotation && (
+            <Grid container spacing={2} justifyContent="flex-end">
+              <Grid item>
+                <Button
+                  variant="outlined"
+                  color="secondary"
+                  onClick={this.addInterpretation}
+                >
+                  Add Interpretation
+                </Button>
+              </Grid>
+            </Grid>
+          )}
 
           {/* Action Buttons */}
           <Grid container spacing={2} justifyContent="flex-end">

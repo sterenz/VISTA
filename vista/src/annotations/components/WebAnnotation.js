@@ -14,6 +14,7 @@ export default class WebAnnotation {
     wasGeneratedBy,
     creator,
     hasStage,
+    disagreeWith,
   }) {
     this.id = id;
     this.created = created;
@@ -27,6 +28,7 @@ export default class WebAnnotation {
     this.wasGeneratedBy = wasGeneratedBy;
     this.creator = creator;
     this.hasStage = hasStage;
+    this.disagreeWith = disagreeWith;
   }
 
   // GOOD URIs: http://{domain}/{type}/{concept}/{reference}
@@ -42,6 +44,7 @@ export default class WebAnnotation {
       hasAnchor: this.hasAnchor,
       wasGeneratedBy: this.wasGeneratedBy,
       hasStage: this.hasStage,
+      disagreeWith: this.disagreeWith,
       type: "Annotation",
     };
   }

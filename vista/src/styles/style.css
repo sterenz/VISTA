@@ -17,6 +17,11 @@
   scrollbar-color: #2d3439 #575d62;
 }
 
+/* Hide page navigator */
+.MuiPaper-root.SizeMe\(WithPlugins\(WindowCanvasNavigationControls\)\)-controls-90.mirador-canvas-nav.SizeMe\(WithPlugins\(WindowCanvasNavigationControls\)\)-canvasNav-88.MuiPaper-elevation0 {
+  display: none;
+}
+
 /* Hide left navbar with Mirador logo */
 /* nav.MuiPaper-root.MuiAppBar-root.MuiAppBar-positionAbsolute.MuiAppBar-colorDefault.WithPlugins\(WorkspaceControlPanel\)-root-5.mirador-workspace-control-panel {
   display: none;
