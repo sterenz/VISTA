@@ -312,6 +312,27 @@ class AnnotationCreation extends Component {
     // Debug check: show final exported SVG
     console.log("Submitting annotation with SVG:", svg);
 
+    // Setting the Correct Icon Class for Recognition Level
+    function mapRecognitionClass(label) {
+      if (label === "Pre-Iconographical")
+        return "icon:PreiconographicalRecognition";
+      if (label === "Iconographical") return "icon:IconographicalRecognition";
+      if (label === "Iconological") return "icon:IconologicalRecognition";
+      // fallback if needed
+      return "icon:PreiconographicalRecognition";
+    }
+    // Setting the Correct Lisa Class for Stage
+    function mapStageClass(label) {
+      if (label === "Draft") return "lisa:Draft";
+      if (label === "Published") return "lisa:Published";
+      if (label === "Deprecated") return "lisa:Deprecated";
+      // fallback if needed
+      return "Draft";
+    }
+
+    const recognitionClass = mapRecognitionClass(recognitionValue);
+    const stageClass = mapStageClass(stageValue);
+
     canvases.forEach((canvas) => {
       const annotationPageId = `${canvas.id}`;
       const storageAdapter = config.annotation.adapter(annotationPageId);
@@ -364,7 +385,7 @@ class AnnotationCreation extends Component {
               id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: recognitionValue, // TODO: Fix and report below
+              type: recognitionClass,
             },
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue // TODO: Fix and report below
               .toLowerCase()
@@ -380,12 +401,12 @@ class AnnotationCreation extends Component {
                 label: interpretationTypeValue,
               }
             : "",
-          hasStage: stageValue
+          hasStage: stageClass
             ? {
                 id: `https://purl.archive.org/domain/mlao/stage/${stageValue // TODO: Fix because "Draft", etc. are subClasses of PublishingStage. It is also wrong in the UML
                   .toLowerCase()
                   .replaceAll(" ", "-")}`,
-                type: "lisa:PublishingStage",
+                type: stageClass,
                 label: stageValue,
               }
             : "",
@@ -437,7 +458,7 @@ class AnnotationCreation extends Component {
               id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: recognitionValue, // TODO: Fix, make it conditional based on the choice.
+              type: recognitionClass,
             },
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
               .toLowerCase()
@@ -454,12 +475,12 @@ class AnnotationCreation extends Component {
                 label: interpretationTypeValue,
               }
             : "",
-          hasStage: stageValue
+          hasStage: stageClass
             ? {
                 id: `https://purl.archive.org/domain/mlao/stage/${stageValue
                   .toLowerCase()
                   .replaceAll(" ", "-")}`,
-                type: "lisa:PublishingStage",
+                type: stageClass,
                 label: stageValue,
               }
             : "",
