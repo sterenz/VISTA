@@ -1,5 +1,13 @@
 # 📑 Change log
 
+2025-29-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- 👀 Implemented JSON-LD context in contexs in `LocalStorageAdapter` to correctly convert in N-Quads.
+- CORS error need to be fix to establish the connection with Blazegraph.
+  For the demo I used a browser extension to allow CORS.
+- Added the Blazegraph variable in `AnnotationCollectioonAdapter.js` and `LocalStorageAdapter.js`.
+- Created local environment variable to store Blazegraph endpoint.
+
 2025-28-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
 - Added `disagreeWith` in `WebAnnotation.js`.

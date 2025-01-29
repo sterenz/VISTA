@@ -322,13 +322,13 @@ class AnnotationCreation extends Component {
         newAnno = new WebAnnotation({
           // new ID
           id: `urn:uuid:${uuid()}`,
+          body: annoBody,
           created: { value: creationTime, type: "xsd:dateTime" },
           canvasId: canvas.id,
           manifestId: canvas.options.resource.id,
           svg,
           xywh,
           //fillColor,
-          body: annoBody,
           // Possibly pass new interpretation fields
           wasGeneratedBy: {
             id: `https://purl.archive.org/domain/mlao/interpretation/${uuid()}`,
@@ -357,16 +357,16 @@ class AnnotationCreation extends Component {
               }
             : "",
           hasAnchor: {
-            label: `Recognition Level: ${recognitionValue}`,
+            label: `The anchor is of recognition level: ${recognitionValue}`,
             id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
             type: "mlao:Anchor",
             hasConceptualLevel: {
               id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: recognitionValue,
+              type: "icon:Recognition", // TODO: Fix and report below
             },
-            isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
+            isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue // TODO: Fix and report below
               .toLowerCase()
               .replaceAll(" ", "-")
               .replaceAll(".", "")}`,
@@ -382,7 +382,7 @@ class AnnotationCreation extends Component {
             : "",
           hasStage: stageValue
             ? {
-                id: `https://purl.archive.org/domain/mlao/stage/${stageValue
+                id: `https://purl.archive.org/domain/mlao/stage/${stageValue // TODO: Fix because "Draft", etc. are subClasses of PublishingStage. It is also wrong in the UML
                   .toLowerCase()
                   .replaceAll(" ", "-")}`,
                 type: "lisa:PublishingStage",
@@ -437,7 +437,7 @@ class AnnotationCreation extends Component {
               id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: recognitionValue, // e.g., "Iconographical"
+              type: "icon:PreiconographicalRecognition", // TODO: Fix, make it conditional based on the choice.
             },
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
               .toLowerCase()

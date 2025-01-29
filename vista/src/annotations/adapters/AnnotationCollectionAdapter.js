@@ -3,7 +3,13 @@ import jsonld from "jsonld";
 
 // For optional Blazegraph saving
 const SAVE_TO_BLAZEGRAPH = process.env.REACT_APP_SAVE_TO_BLAZEGRAPH === "true";
-const BLAZEGRAPH_ENDPOINT = "http://localhost:80/blazegraph/sparql";
+
+const BLAZEGRAPH_ENDPOINT = process.env.REACT_APP_BLAZEGRAPH_ENDPOINT;
+if (!BLAZEGRAPH_ENDPOINT) {
+  throw new Error(
+    "REACT_APP_BLAZEGRAPH_ENDPOINT is not set in environment variables."
+  );
+}
 
 /**
  * A base URI for your purl-based collection IDs.
@@ -80,7 +86,6 @@ export default class AnnotationCollectionAdapter {
         label: { en: ["My Global Annotation Collection"] },
         summary: { en: ["Collects all annotation pages for local demos"] },
         // total = 0 or updated later
-        total: 0,
         items: [],
       };
 
