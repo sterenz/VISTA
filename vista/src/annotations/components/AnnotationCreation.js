@@ -364,7 +364,7 @@ class AnnotationCreation extends Component {
               id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: "icon:Recognition", // TODO: Fix and report below
+              type: recognitionValue, // TODO: Fix and report below
             },
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue // TODO: Fix and report below
               .toLowerCase()
@@ -437,7 +437,7 @@ class AnnotationCreation extends Component {
               id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
-              type: "icon:PreiconographicalRecognition", // TODO: Fix, make it conditional based on the choice.
+              type: recognitionValue, // TODO: Fix, make it conditional based on the choice.
             },
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
               .toLowerCase()

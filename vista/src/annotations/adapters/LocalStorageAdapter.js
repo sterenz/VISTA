@@ -185,17 +185,50 @@ export default class LocalStorageAdapter {
     }
   }
 
-  // Save RDF data to Blazegraph
+  // // Save RDF data to Blazegraph
+  // async saveRdf(rdfData) {
+  //   if (!SAVE_TO_BLAZEGRAPH) {
+  //     console.log("Blazegraph saving is disabled. Skipping saveRdf.");
+  //     return;
+  //   }
+
+  //   console.log("Serialized RDF Data:", rdfData);
+  //   const sparqlUpdate = `
+  //     INSERT DATA { ${rdfData} }
+  //   `;
+  //   try {
+  //     const response = await axios.post(BLAZEGRAPH_ENDPOINT, sparqlUpdate, {
+  //       headers: {
+  //         "Content-Type": "application/sparql-update",
+  //       },
+  //     });
+  //     console.log("Blazegraph Response:", response.status, response.statusText);
+  //   } catch (error) {
+  //     console.error(
+  //       "Error saving RDF to Blazegraph:",
+  //       error.response?.data || error.message
+  //     );
+  //     // Optionally, implement further error handling here
+  //   }
+  // }
+
   async saveRdf(rdfData) {
     if (!SAVE_TO_BLAZEGRAPH) {
       console.log("Blazegraph saving is disabled. Skipping saveRdf.");
       return;
     }
-
     console.log("Serialized RDF Data:", rdfData);
+
+    // We'll use the annotation page ID as the named graph
+    const graphUri = this.annotationPageId + "/annotation-page"; // or some stable URI
+
+    // We do a "DROP GRAPH" to remove any old data for this page,
+    // then re-insert the new data into that graph
     const sparqlUpdate = `
-      INSERT DATA { ${rdfData} }
-    `;
+    DROP GRAPH <${graphUri}> ;
+    INSERT DATA { GRAPH <${graphUri}> { ${rdfData} } }
+  `;
+
     try {
       const response = await axios.post(BLAZEGRAPH_ENDPOINT, sparqlUpdate, {
         headers: {
@@ -208,7 +241,6 @@ export default class LocalStorageAdapter {
         "Error saving RDF to Blazegraph:",
         error.response?.data || error.message
       );
-      // Optionally, implement further error handling here
     }
   }
 

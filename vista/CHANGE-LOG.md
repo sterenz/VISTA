@@ -2,7 +2,8 @@
 
 2025-29-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
-- 👀 Implemented JSON-LD context in contexs in `LocalStorageAdapter` to correctly convert in N-Quads.
+- Modified `saveRdf` in `LocalStorageAdapter.js` to drop all existing annotations to not duplicate them.
+- 👀 Implemented JSON-LD context in contexs in `LocalStorageAdapter.js` to correctly convert in N-Quads.
 - CORS error need to be fix to establish the connection with Blazegraph.
   For the demo I used a browser extension to allow CORS.
 - Added the Blazegraph variable in `AnnotationCollectioonAdapter.js` and `LocalStorageAdapter.js`.
