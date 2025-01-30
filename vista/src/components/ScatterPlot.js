@@ -30,16 +30,16 @@ ChartJS.register(
 
 // Map levels to y-axis positions
 const levelMapping = {
-  "Pre-Iconographical": 1,
-  Iconographical: 2,
-  Iconological: 3,
+  "icon:PreiconographicalRecognition": 1,
+  "icon:IconographicalRecognition": 2,
+  "icon:IconologicalRecognition": 3,
 };
 
 // Define colors for each recognition level
 const levelColors = {
-  "Pre-Iconographical": "#FF5733", // Red-ish
-  Iconographical: "#33FF57", // Green-ish
-  Iconological: "#3357FF", // Blue-ish
+  "icon:PreiconographicalRecognition": "#FF5733", // Red-ish
+  "icon:IconographicalRecognition": "#33FF57", // Green-ish
+  "icon:IconologicalRecognition": "#3357FF", // Blue-ish
 };
 
 const ScatterPlot = () => {

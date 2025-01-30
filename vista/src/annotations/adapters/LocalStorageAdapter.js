@@ -63,6 +63,17 @@ export default class LocalStorageAdapter {
         this.annotationPageId,
         JSON.stringify(annotationPage)
       );
+
+      // *** Dispatch the event after the storage update ***
+      window.dispatchEvent(
+        new CustomEvent("annotationsUpdated", {
+          detail: {
+            pageId: this.annotationPageId,
+            action: "create",
+          },
+        })
+      );
+
       console.log("Updated Annotation Page:", annotationPage);
 
       // Serialize to RDF
@@ -107,6 +118,15 @@ export default class LocalStorageAdapter {
         JSON.stringify(annotationPage)
       );
 
+      window.dispatchEvent(
+        new CustomEvent("annotationsUpdated", {
+          detail: {
+            pageId: this.annotationPageId,
+            action: "update",
+          },
+        })
+      );
+
       const rdfData = await this.toRdf(annotationPage);
       if (rdfData) {
         await this.saveRdf(rdfData);
@@ -139,6 +159,15 @@ export default class LocalStorageAdapter {
       localStorage.setItem(
         this.annotationPageId,
         JSON.stringify(annotationPage)
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("annotationsUpdated", {
+          detail: {
+            pageId: this.annotationPageId,
+            action: "delete",
+          },
+        })
       );
 
       const rdfData = await this.toRdf(annotationPage);
@@ -254,7 +283,7 @@ export default class LocalStorageAdapter {
   // Define the @context based on your ontology
   getContext() {
     return [
-      "http://www.w3.org/ns/anno.jsonld",
+      "http://www.w3.org/ns/anno.jsonld", // Without this the N-Quas are not correctly formed
       {
         rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
         rdfs: "http://www.w3.org/2000/01/rdf-schema",

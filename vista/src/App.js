@@ -1,6 +1,7 @@
 import React from "react";
 import MiradorViewer from "./MiradorViewer";
 import ScatterPlot from "./components/ScatterPlot";
+import AnnotationGraph from "./components/AnnotationGraph";
 
 function App() {
   return (
@@ -8,6 +9,7 @@ function App() {
       <h1>My Mirador App</h1>
       <MiradorViewer />
       <ScatterPlot />
+      <AnnotationGraph />
     </div>
   );
 }

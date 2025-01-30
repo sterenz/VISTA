@@ -2,6 +2,15 @@
 
 2025-29-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Modified `AnnotationGraph` to listen for `annotationsUpdate`.
+- Modified `LocalSotrageAdapter` with `window.dispatchEvent` to fire `annotationsUpdate` handler.
+- Added Cola with `yarn add cytoscape-cola`.
+  TODO: Check if needed
+- Created `AnnotationGraph` to render annotations graph netwrok.
+- Added Cytoscape to render graphs with `yarn add react-cytoscapejs` and `yarn add cytoscape@3.2.19 `.
+
+2025-29-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
 - Mapped `recognitionClass` and `stageClass` to dynamically asssign correct class.
 - Modified `saveRdf` in `LocalStorageAdapter.js` to drop all existing annotations to not duplicate them.
 - 👀 Implemented JSON-LD context in contexs in `LocalStorageAdapter.js` to correctly convert in N-Quads.

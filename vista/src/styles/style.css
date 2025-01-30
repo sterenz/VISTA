@@ -13,6 +13,11 @@
   padding-left: 0px !important; 
 } */
 
+.App {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
 .mirador-scrollto-scrollable {
   scrollbar-color: #2d3439 #575d62;
 }

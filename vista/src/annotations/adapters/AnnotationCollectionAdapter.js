@@ -1,3 +1,9 @@
+//***************//
+
+// This class manages a global collection of annotation pages:
+
+//***************//
+
 import axios from "axios";
 import jsonld from "jsonld";
 
@@ -24,6 +30,10 @@ const COLLECTION_BASE_URI =
  * (Can still override this in the constructor if needed).
  */
 const DEFAULT_COLLECTION_STORAGE_KEY = "myGlobalAnnotationCollection";
+
+//************/
+// This class manages a global collection of annotation pages
+//************/
 
 export default class AnnotationCollectionAdapter {
   /**
@@ -80,7 +90,7 @@ export default class AnnotationCollectionAdapter {
 
     if (!collection) {
       collection = {
-        "@context": "http://iiif.io/api/presentation/3/context.json",
+        "@context": "http://iiif.io/api/presentation/3/context.json", // TODO: Is thiis context correct?
         id: this.collectionId,
         type: "AnnotationCollection",
         label: { en: ["My Global Annotation Collection"] },
@@ -99,6 +109,8 @@ export default class AnnotationCollectionAdapter {
    * Add a reference to an AnnotationPage (pageId) to the Collection's 'items' array.
    */
   async addAnnotationPage(pageId) {
+    console.log(`Adding annotation page: ${pageId} to global collection`);
+
     const collection = await this.initializeCollection();
     const alreadyInCollection = collection.items.find((p) => p.id === pageId);
 
@@ -111,6 +123,8 @@ export default class AnnotationCollectionAdapter {
       // If you want total to represent the # of Annotations, you'd need a separate summation.
 
       localStorage.setItem(this.storageKey, JSON.stringify(collection));
+      console.log(`Added annotation page ${pageId} to global collection`);
+
       await this.saveCollectionToBlazegraph(collection);
     }
     return collection;
@@ -120,13 +134,21 @@ export default class AnnotationCollectionAdapter {
    * Remove a reference to an AnnotationPage from the Collection (if present).
    */
   async removeAnnotationPage(pageId) {
+    console.log(`Removing annotation page: ${pageId} from global collection`);
+
     const collection = await this.initializeCollection();
     const initialLen = collection.items.length;
     collection.items = collection.items.filter((p) => p.id !== pageId);
 
     if (collection.items.length < initialLen) {
       localStorage.setItem(this.storageKey, JSON.stringify(collection));
+      console.log(`Removed annotation page ${pageId} from global collection`);
+
       await this.saveCollectionToBlazegraph(collection);
+    } else {
+      console.warn(
+        `Annotation page ${pageId} was not found in the global collection`
+      );
     }
 
     return collection;
