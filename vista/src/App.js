@@ -6,7 +6,7 @@ import AnnotationGraph from "./components/AnnotationGraph";
 function App() {
   return (
     <div className="App">
-      <h1>My Mirador App</h1>
+      <h1 className="logo">vista</h1>
       <MiradorViewer />
       <ScatterPlot />
       <AnnotationGraph />

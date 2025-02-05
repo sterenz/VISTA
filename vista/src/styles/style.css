@@ -13,13 +13,43 @@
   padding-left: 0px !important; 
 } */
 
+body {
+  background-color: #f6f2f1;
+}
+
 .App {
   padding-left: 2rem;
   padding-right: 2rem;
 }
 
+.logo {
+  color: #891e2e;
+  font-style: italic;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.MuiPaper-root {
+  color: #f6f2f1 !important;
+}
+
+/* Close companion area left sidebar button */
+.Connect\(WithPlugins\(CompanionArea\)\)-toggle-56 {
+  background-color: #3f444c !important;
+}
+
 .mirador-scrollto-scrollable {
-  scrollbar-color: #2d3439 #575d62;
+  scrollbar-color: #21272b #3f444c;
+}
+
+/* sidebar with Mirador logo */
+.MuiAppBar-colorDefault {
+  background-color: #21272b !important;
+  color: #f6f2f1 !important;
+}
+
+/* Mirador background under the window */
+.Connect\(WithPlugins\(WorkspaceArea\)\)-viewer-1 {
+  background: rgb(63 68 76);
 }
 
 /* Hide page navigator */
@@ -33,15 +63,23 @@
 } */
 
 .annotation-item {
+  padding-bottom: 8px;
   font-size: 16px;
-  border-bottom: 1px solid salmon;
+  border-bottom: 1px solid rgb(104, 104, 104);
 }
 
 .annotation-item span span p {
   font-size: 20px;
   font-weight: 800;
+  margin: 4px 0;
 }
 
 .annotation-metadata {
-  padding-bottom: 8px;
+  padding: 8px;
+}
+
+/* HELPER */
+
+.mb-8 {
+  margin-bottom: 8px;
 }

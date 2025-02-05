@@ -73,14 +73,14 @@ class TextEditor extends Component {
 
     return (
       <div>
-        <ToggleButtonGroup size="small" value={currentStyle.toArray()}>
+        {/* <ToggleButtonGroup size="small" value={currentStyle.toArray()}>
           <ToggleButton onClick={this.handleFormating} value="BOLD">
             <BoldIcon />
           </ToggleButton>
           <ToggleButton onClick={this.handleFormating} value="ITALIC">
             <ItalicIcon />
           </ToggleButton>
-        </ToggleButtonGroup>
+        </ToggleButtonGroup> */}
 
         <div className={classes.editorRoot} onClick={this.handleFocus}>
           <Editor

@@ -10,15 +10,15 @@ export const vistaTheme = {
       palette: {
         type: "dark",
         primary: {
-          main: "#ffffff", // Your custom primary color
+          main: "#F6F2F1", // Your custom primary color
         },
         secondary: {
-          main: "#f3f3f3b3", // Your custom secondary color
+          main: "#f3f3f3", // Your custom secondary color
         },
         shades: {
-          dark: "#2d3439", // Dark shade for dark theme
-          main: "#2d3439", // Main shade for dark theme
-          light: "#2d3439", // Light shade for dark theme
+          dark: "#21272B", // Dark shade for dark theme
+          main: "#21272B", // Main shade for dark theme
+          light: "#21272B", // Light shade for dark theme
         },
         error: {
           main: "#b00020", // Error color
@@ -173,13 +173,13 @@ export const vistaTheme = {
         },
         MuiPaper: {
           root: {
-            backgroundColor: "#2d3439", // Your custom background color for the left sidebar
+            backgroundColor: "#21272b", // Your custom background color for the left sidebar
           },
         },
         MuiFab: {
           primary: {
-            backgroundColor: "#822433", // Default button background color
-            color: "#fff", // Default button text color
+            backgroundColor: "#891E2E", // "#822433", // Default button background color
+            color: "#F6F2F1", // Default button text color
             "&:hover": {
               backgroundColor: "#ac3b3b", // Button hover background color
             },

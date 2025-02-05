@@ -34,6 +34,8 @@ import AnnotationDrawing from "./AnnotationDrawing";
 import TextEditor from "./TextEditor";
 import WebAnnotation from "./WebAnnotation";
 import CursorIcon from "../icons/Cursor";
+// import Snackbar from "@material-ui/core/Snackbar";
+// import MuiAlert from "@material-ui/lab/Alert";
 
 /** */
 class AnnotationCreation extends Component {
@@ -124,14 +126,21 @@ class AnnotationCreation extends Component {
         annoState.recognitionValue = levelType;
 
         // Also pick a color if you want the shape to be recolored
-        if (levelType === "Pre-Iconographical") {
-          annoState.fillColor = "rgba(255,0,0,0.2)";
-        } else if (levelType === "Iconographical") {
-          annoState.fillColor = "rgba(0,255,0,0.2)";
-        } else if (levelType === "Iconological") {
-          annoState.fillColor = "rgba(0,0,255,0.2)";
-        }
+        // if (levelType === "Pre-Iconographical") {
+        //   annoState.fillColor = "rgba(255,0,0,0.2)";
+        // } else if (levelType === "Iconographical") {
+        //   annoState.fillColor = "rgba(0,255,0,0.2)";
+        // } else if (levelType === "Iconological") {
+        //   annoState.fillColor = "rgba(0,0,255,0.2)";
+        // }
         // etc.
+        if (levelType === "Pre-Iconographical") {
+          annoState.fillColor = "rgba(244, 144, 179, 0.2)";
+        } else if (levelType === "Iconographical") {
+          annoState.fillColor = "rgba(247, 77, 139, 0.2)";
+        } else if (levelType === "Iconological") {
+          annoState.fillColor = "rgba(249, 33, 66, 0.2)";
+        }
       }
 
       // Interpretation Criterion
@@ -359,6 +368,7 @@ class AnnotationCreation extends Component {
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
               type: "hico:InterpretationCriterion",
+              label: criterionValue,
             },
             isExtractedFrom: expressionUri
               ? {
@@ -381,12 +391,15 @@ class AnnotationCreation extends Component {
             label: `The anchor is of recognition level: ${recognitionValue}`,
             id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
             type: "mlao:Anchor",
-            hasConceptualLevel: {
-              id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
-                .toLowerCase()
-                .replaceAll(" ", "-")}`,
-              type: recognitionClass,
-            },
+            hasConceptualLevel: recognitionValue
+              ? {
+                  id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
+                    .toLowerCase()
+                    .replaceAll(" ", "-")}`,
+                  type: recognitionClass,
+                  label: recognitionValue,
+                }
+              : "",
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue // TODO: Fix and report below
               .toLowerCase()
               .replaceAll(" ", "-")
@@ -432,6 +445,7 @@ class AnnotationCreation extends Component {
                 .toLowerCase()
                 .replaceAll(" ", "-")}`,
               type: "hico:InterpretationCriterion",
+              label: criterionValue,
             },
             isExtractedFrom: expressionUri
               ? {
@@ -454,12 +468,15 @@ class AnnotationCreation extends Component {
             label: `Recognition Level: ${recognitionValue}`,
             id: `https://purl.archive.org/domain/mlao/anchor/${uuid()}`,
             type: "mlao:Anchor",
-            hasConceptualLevel: {
-              id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
-                .toLowerCase()
-                .replaceAll(" ", "-")}`,
-              type: recognitionClass,
-            },
+            hasConceptualLevel: recognitionValue
+              ? {
+                  id: `https://purl.archive.org/domain/mlao/${recognitionValue}/${uuid()
+                    .toLowerCase()
+                    .replaceAll(" ", "-")}`,
+                  type: recognitionClass,
+                  label: recognitionValue,
+                }
+              : "",
             isAnchoredTo: `https://purl.archive.org/domain/mlao/${entityValue
               .toLowerCase()
               .replaceAll(" ", "-")
@@ -589,26 +606,43 @@ class AnnotationCreation extends Component {
   handleRecognitionLevelChange = (event, newValue) => {
     // 1) Derive the fill color based on the recognition level
     let nextFillColor;
+    let nextStrokeColor;
+    // if (newValue === "Pre-Iconographical") {
+    //   nextFillColor = "rgba(255, 0, 0, 0.2)"; // red-ish
+    // } else if (newValue === "Iconographical") {
+    //   nextFillColor = "rgba(0, 255, 0, 0.2)"; // green-ish
+    // } else if (newValue === "Iconological") {
+    //   nextFillColor = "rgba(0, 0, 255, 0.2)"; // blue-ish
+    // } else {
+    //   nextFillColor = "rgba(255, 255, 255, 0.2)"; // fallback color
+    // }
     if (newValue === "Pre-Iconographical") {
-      nextFillColor = "rgba(255, 0, 0, 0.2)"; // red-ish
+      nextFillColor = "rgba(255, 187, 60, 0.3)";
+      nextStrokeColor = "rgba(255, 187, 60, 0.6)";
     } else if (newValue === "Iconographical") {
-      nextFillColor = "rgba(0, 255, 0, 0.2)"; // green-ish
+      nextFillColor = "rgba(234, 86, 130, 0.3)";
+      nextStrokeColor = "rgba(234, 86, 130, 0.6)";
     } else if (newValue === "Iconological") {
-      nextFillColor = "rgba(0, 0, 255, 0.2)"; // blue-ish
+      nextFillColor = "rgba(93, 83, 133, 0.3)";
+      nextStrokeColor = "rgba(93, 83, 133, 0.6)";
     } else {
-      nextFillColor = "rgba(255, 255, 255, 0.2)"; // fallback color
+      nextFillColor = "rgba(255, 255, 255, 0.3)"; // fallback color
+      nextStrokeColor = "rgba(255, 255, 255, 0.3)";
     }
 
     // 2) Update state so future shapes will use this new fill color
     this.setState({
       recognitionValue: newValue,
       fillColor: nextFillColor,
+      strokeColor: nextStrokeColor,
     });
 
     // 3) Update the current shape in Paper.js
     // If the user is *still* drawing a shape or has one selected, we can update its fill color
     if (this.annotationDrawingRef?.current?.currentPath) {
       this.annotationDrawingRef.current.currentPath.fillColor = nextFillColor;
+      this.annotationDrawingRef.current.currentPath.strokeColor =
+        nextStrokeColor;
     }
 
     // 4) Re-export paths so the final SVG (stored in `this.state.svg`) is updated
@@ -692,7 +726,7 @@ class AnnotationCreation extends Component {
       closedMode,
       annoBody,
       svg,
-      textEditorStateBustingKey,
+      //textEditorStateBustingKey,
     } = this.state;
     return (
       <CompanionWindow
@@ -767,11 +801,11 @@ class AnnotationCreation extends Component {
           </Grid>
           {/* Style Tools */}
           <Grid container>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography variant="overline">Style</Typography>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
-              <ToggleButtonGroup
+              {/* <ToggleButtonGroup
                 className={classes.grouped}
                 aria-label="style selection"
                 size="small"
@@ -801,15 +835,16 @@ class AnnotationCreation extends Component {
                   <FormatColorFillIcon style={{ fill: fillColor }} />
                   <ArrowDropDownIcon />
                 </ToggleButton>
-              </ToggleButtonGroup>
+              </ToggleButtonGroup> */}
 
-              <Divider
+              {/* <Divider
                 flexItem
                 orientation="vertical"
                 className={classes.divider}
-              />
-              {
-                /* close / open polygon mode only for freehand drawing mode. */
+              /> */}
+              {/* /* close / open polygon mode only for freehand drawing mode. */}
+
+              {/* {
                 activeTool === "freehand" ? (
                   <ToggleButtonGroup
                     size="small"
@@ -824,18 +859,25 @@ class AnnotationCreation extends Component {
                     </ToggleButton>
                   </ToggleButtonGroup>
                 ) : null
-              }
+              } */}
             </Grid>
           </Grid>
+          <Divider
+            flexItem
+            orientation="horizontal"
+            className={classes.divider}
+          />
           {/* Level of Recognition */}
           <Grid container>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Typography variant="overline">Level of Recognition</Typography>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12}>
               <FormControl fullWidth>
                 <Select
                   labelId="recognition-level-label"
+                  variant="standard"
+                  label="Recognition Level"
                   id="recognition-level-select"
                   value={this.state.recognitionValue}
                   onChange={(event) => {
@@ -865,6 +907,7 @@ class AnnotationCreation extends Component {
             {/* Interpretative Criterion */}
             <Grid item xs={12}>
               <Autocomplete
+                className="mb-8"
                 freeSolo
                 size="small"
                 value={this.state.criterionValue}
@@ -879,16 +922,6 @@ class AnnotationCreation extends Component {
                   />
                 )}
               />
-            </Grid>
-
-            <Divider
-              flexItem
-              orientation="horizontal"
-              className={classes.divider}
-            />
-
-            {/* Expression URI */}
-            <Grid item xs={12}>
               <TextField
                 variant="standard"
                 label="Expression URI"
@@ -904,6 +937,24 @@ class AnnotationCreation extends Component {
               orientation="horizontal"
               className={classes.divider}
             />
+
+            {/* Expression URI */}
+            {/* <Grid item xs={12}>
+              <TextField
+                variant="standard"
+                label="Expression URI"
+                fullWidth
+                value={this.state.expressionUri}
+                onChange={this.handleExpressionUriChange}
+                placeholder="https://example.org/expressions/12345"
+              />
+            </Grid>
+
+            <Divider
+              flexItem
+              orientation="horizontal"
+              className={classes.divider}
+            /> */}
 
             {/* Creator */}
             <Grid item xs={12}>
@@ -988,7 +1039,7 @@ class AnnotationCreation extends Component {
             </Grid>
             <Grid item xs={12}>
               <TextEditor
-                key={textEditorStateBustingKey}
+                //key={textEditorStateBustingKey}
                 annoHtml={annoBody}
                 updateAnnotationBody={this.updateBody}
               />
@@ -1000,10 +1051,10 @@ class AnnotationCreation extends Component {
               <Grid item>
                 <Button
                   variant="outlined"
-                  color="secondary"
+                  color="primary"
                   onClick={this.addInterpretation}
                 >
-                  Add Interpretation
+                  New Interpretation
                 </Button>
               </Grid>
             </Grid>

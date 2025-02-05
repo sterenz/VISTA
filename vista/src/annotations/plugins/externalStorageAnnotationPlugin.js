@@ -16,6 +16,7 @@ class ExternalStorageAnnotation extends Component {
   componentDidMount() {
     const { canvases } = this.props;
     this.retrieveAnnotations(canvases);
+    console.log("ExternalStorageAnnotation componentDidMount", canvases); //TEST
   }
 
   /** */

@@ -37,9 +37,9 @@ const levelMapping = {
 
 // Define colors for each recognition level
 const levelColors = {
-  "icon:PreiconographicalRecognition": "#FF5733", // Red-ish
-  "icon:IconographicalRecognition": "#33FF57", // Green-ish
-  "icon:IconologicalRecognition": "#3357FF", // Blue-ish
+  "icon:PreiconographicalRecognition": "rgba(255, 187, 60, 0.3)", // Red-ish
+  "icon:IconographicalRecognition": "rgba(234, 86, 130, 0.3)", // Green-ish
+  "icon:IconologicalRecognition": "rgba(93, 83, 133, 0.3)", // Blue-ish
 };
 
 const ScatterPlot = () => {
@@ -132,7 +132,7 @@ const ScatterPlot = () => {
         data: levelData,
         backgroundColor: levelColors[level],
         borderColor: levelColors[level],
-        pointRadius: 5, // Adjust as needed
+        pointRadius: 20, // Adjust as needed
       };
     });
 

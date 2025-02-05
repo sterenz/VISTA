@@ -1,7 +1,13 @@
 # 📑 Change log
 
-2025-29-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+2025-04-02 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Try to fix the multiple renders in same context provider by modifing `AnnotationDrawing.js`.
+  The issue persists but the svg are correctly rendered.
+
+2025-30-01 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Added Cytoscape layout with `yarn add cytoscape-cose-bilkent`.
 - Modified `AnnotationGraph` to listen for `annotationsUpdate`.
 - Modified `LocalSotrageAdapter` with `window.dispatchEvent` to fire `annotationsUpdate` handler.
 - Added Cola with `yarn add cytoscape-cola`.

@@ -120,13 +120,13 @@ class CanvasListItem extends Component {
     let stageColor = "#DDD"; // default or fallback color
     switch (stageLabel) {
       case "Draft":
-        stageColor = "orange";
+        stageColor = "#F3984B";
         break;
       case "Published":
-        stageColor = "green";
+        stageColor = "#398884";
         break;
       case "Deprecated":
-        stageColor = "gray";
+        stageColor = "#9F9F9F";
         break;
       // Add more cases if needed
       default:
@@ -137,9 +137,10 @@ class CanvasListItem extends Component {
     const creatorName = annotation?.creator?.name || "Unknown";
     // const stageLabel = annotation?.hasStage?.label || "No Stage";
     const interpretationCriterion =
-      annotation?.wasGeneratedBy?.hasInterpretationCriterion.id || "";
+      annotation?.wasGeneratedBy?.hasInterpretationCriterion.label || "";
 
     const expressionUri = annotation?.wasGeneratedBy?.isExtractedFrom?.id || "";
+
     // add more as needed
 
     return (
@@ -195,21 +196,25 @@ class CanvasListItem extends Component {
         >
           {/* 3) Display extra metadata after the children */}
           {/* The default body content that Mirador passes as children */}
-          {children}
-          <div className="annotation-metadata">
-            <strong>Creator:</strong> {creatorName}
+
+          <div className="annotation-metadata creator">
+            <span className="MuiTypography-root MuiTypography-overline">
+              {creatorName}
+            </span>
           </div>
-          <div className="annotation-metadata">
-            <strong>Stage:</strong> {stageLabel}
-          </div>
+
+          <div className="annotation-metadata body">{children}</div>
+
           {interpretationCriterion && (
-            <div className="annotation-metadata">
-              <strong>Criterion:</strong> {interpretationCriterion}
+            <div className="annotation-metadata criterion">
+              <div>Interpretation Criterion:</div>
+              <div>{interpretationCriterion}</div>
             </div>
           )}
           {expressionUri && (
-            <div className="annotation-metadata">
-              <strong>Expression URI:</strong> {expressionUri}
+            <div className="annotation-metadata cites">
+              <div>Cites:</div>
+              <div>{expressionUri}</div>
             </div>
           )}
         </li>

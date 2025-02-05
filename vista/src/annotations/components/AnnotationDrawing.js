@@ -29,9 +29,26 @@ class AnnotationDrawing extends Component {
     this.currentPath = null;
   }
 
+  // componentDidMount() {
+  //   const { windowId } = this.props;
+  //   this.OSDReference = OSDReferences.get(windowId);
+  //   console.log("DEBUG OSDReference:", this.OSDReference); // TEST
+  //   console.log(
+  //     "AnnotationDrawing: using portal target:",
+  //     this.OSDReference.element
+  //   ); // TEST
+  // }
+
   componentDidMount() {
     const { windowId } = this.props;
-    this.OSDReference = OSDReferences.get(windowId);
+    const osdRef = OSDReferences.get(windowId);
+    if (osdRef && osdRef.current) {
+      this.OSDReference = osdRef.current;
+      console.log(
+        "AnnotationDrawing: using portal target:",
+        this.OSDReference.element
+      );
+    }
   }
 
   componentDidUpdate(prevProps) {
@@ -286,10 +303,48 @@ class AnnotationDrawing extends Component {
     );
   }
 
+  // render() {
+  //   const { windowId } = this.props;
+  //   this.OSDReference = OSDReferences.get(windowId).current;
+  //   return ReactDOM.createPortal(this.paperThing(), this.OSDReference.element);
+  // }
+  // render() {
+  //   // Use cached target if available; otherwise try to get it now.
+  //   const target =
+  //     (this.OSDReference && this.OSDReference.element) ||
+  //     OSDReferences.get(this.props.windowId)?.current?.element;
+  //   if (!target) {
+  //     return null;
+  //   }
+  //   return ReactDOM.createPortal(this.paperThing(), target);
+  // }
+
   render() {
-    const { windowId } = this.props;
-    this.OSDReference = OSDReferences.get(windowId).current;
-    return ReactDOM.createPortal(this.paperThing(), this.OSDReference.element);
+    // Get the OSD container element from the OSDReferences.
+    const osdElement =
+      (this.OSDReference && this.OSDReference.element) ||
+      OSDReferences.get(this.props.windowId)?.current?.element;
+    if (!osdElement) {
+      return null;
+    }
+
+    // Check if a dedicated portal container already exists;
+    // if not, create one and append it as a child of the OSD element.
+    let portalContainer = osdElement.querySelector(
+      "#annotation-drawing-portal"
+    );
+    if (!portalContainer) {
+      portalContainer = document.createElement("div");
+      portalContainer.id = "annotation-drawing-portal";
+      // Optionally, you can style the container so it fills its parent
+      portalContainer.style.width = "100%";
+      portalContainer.style.height = "100%";
+      // Append the new container to the OSD element.
+      osdElement.appendChild(portalContainer);
+    }
+
+    // Render the PaperContainer (your paperThing) into this dedicated portal container.
+    return ReactDOM.createPortal(this.paperThing(), portalContainer);
   }
 }
 
@@ -308,8 +363,8 @@ AnnotationDrawing.defaultProps = {
   activeTool: null,
   closed: true,
   fillColor: null,
-  strokeColor: "#00BFFF",
-  strokeWidth: 1,
+  strokeColor: "#F6F2F1",
+  strokeWidth: 3,
   svg: null,
 };
 
