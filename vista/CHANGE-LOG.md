@@ -1,5 +1,24 @@
 # 📑 Change log
 
+2025-22-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Modified `AnnotationGraph.js`.
+- Added rule in `index-css` to hide runtime error ui.
+
+2025-20-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Created `BottomNavigation.js`.
+- Added Tailwind CSS and create variables for colors.
+
+2025-04-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Tested workflow.
+- CSS adjustments.
+
+2025-20-02 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Tested workflow.
+
 2025-04-02 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
 - Try to fix the multiple renders in same context provider by modifing `AnnotationDrawing.js`.

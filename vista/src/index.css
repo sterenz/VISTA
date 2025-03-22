@@ -1,13 +1,137 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap"); */
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+    @apply bg-vista-white;
+  }
+  :root {
+    /* vista-text */
+    --vista-text-light: #9d9d9d;
+    --vista-text: #2a2a2a;
+
+    /* vista-white */
+    --vista-white: #f6f4f1;
+    --vista-white-dark: #ebe9e5;
+
+    /* vista-purple */
+    --vista-purple-light: #d1c5eb;
+    --vista-purple: #846bba;
+
+    /* vista-green */
+    --vista-green-light: #9cc7c5;
+    --vista-green: #3c9e8e;
+
+    /* vista-blue */
+    --vista-blue-light: #aac6e1;
+    --vista-blue: #3d79b5;
+
+    /* vista-yellow */
+    --vista-yellow: #f6c049;
+
+    /* vista orange */
+    --vista-orange: #f9aa78;
+
+    /* vista-gray */
+    --vista-gray-light: #eeeeee;
+    --vista-gray: #a0a0a0;
+    --vista-gray-dark: #5d5c5c;
+
+    /* vista-bordeaux */
+    --vista-bordeaux: #891e2e;
+    --vista-bordeaux-dark: #6a0615;
+
+    /* vista-anno */
+    --vista-anno-preico: #fbd284;
+    --vista-anno-iconogra: #ef95ae;
+    --vista-anno-iconolo: #948bf9;
+  }
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+#vista-mirador {
+  position: relative;
+  width: 100%;
+  height: 800px; /* Set the desired height */
+  margin-top: 40px;
+  overflow: hidden;
+}
+
+/* since the left navbar is hidden I don't need the padding */
+/* .Connect\(WithPlugins\(Workspace\)\)-workspaceWithControlPanel-21 {
+  padding-left: 0px !important; 
+} */
+
+/* HIDE RUNTIME ERROR OVERLAY */
+body > iframe {
+  display: none;
+}
+
+#webpack-dev-server-client-overlay-div {
+  display: none;
+}
+/* END - HIDE RUNTIME ERROR OVERLAY */
+
+.App {
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.logo {
+  color: #891e2e;
+  font-style: italic;
+  font-family: "Times New Roman", Times, serif;
+}
+
+.MuiPaper-root {
+  color: #f6f2f1 !important;
+}
+
+/* Close companion area left sidebar button */
+.Connect\(WithPlugins\(CompanionArea\)\)-toggle-56 {
+  background-color: #3f444c !important;
+}
+
+.mirador-scrollto-scrollable {
+  scrollbar-color: #21272b #3f444c;
+}
+
+/* sidebar with Mirador logo */
+.MuiAppBar-colorDefault {
+  background-color: #21272b !important;
+  color: #f6f2f1 !important;
+}
+
+/* Mirador background under the window */
+.Connect\(WithPlugins\(WorkspaceArea\)\)-viewer-1 {
+  background: rgb(63 68 76);
+}
+
+/* Hide page navigator */
+.MuiPaper-root.SizeMe\(WithPlugins\(WindowCanvasNavigationControls\)\)-controls-90.mirador-canvas-nav.SizeMe\(WithPlugins\(WindowCanvasNavigationControls\)\)-canvasNav-88.MuiPaper-elevation0 {
+  display: none;
+}
+
+/* Hide left navbar with Mirador logo */
+/* nav.MuiPaper-root.MuiAppBar-root.MuiAppBar-positionAbsolute.MuiAppBar-colorDefault.WithPlugins\(WorkspaceControlPanel\)-root-5.mirador-workspace-control-panel {
+  display: none;
+} */
+
+.annotation-item {
+  padding-bottom: 8px;
+  font-size: 16px;
+  border-bottom: 1px solid rgb(104, 104, 104);
+}
+
+.annotation-item span span p {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 4px 0;
+}
+
+.annotation-metadata {
+  padding: 8px;
 }

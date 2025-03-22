@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import "../index.css"; // contains the :root variables
 import CytoscapeComponent from "react-cytoscapejs";
 import cytoscape from "cytoscape";
 import coseBilkent from "cytoscape-cose-bilkent";
@@ -191,7 +192,7 @@ function AnnotationGraph() {
             nodes.push({
               data: {
                 id: critId,
-                label: "Criterion:\n" + critLabel,
+                label: critLabel,
                 type: "criterion", // or any distinct type you prefer
               },
             });
@@ -219,7 +220,7 @@ function AnnotationGraph() {
             nodes.push({
               data: {
                 id: citeUri,
-                label: "Source:\n" + citeUri,
+                label: citeUri,
                 type: "citation", // or "expression", etc
               },
             });
@@ -258,7 +259,9 @@ function AnnotationGraph() {
       fit: true,
       padding: 20,
       avoidOverlap: true,
-      spacingFactor: 1.2,
+      spacingFactor: 2,
+      nodeRepulsion: 500, // Stronger repulsion to avoid clustering
+      idealEdgeLength: 100, // Increase edge length to spread nodes apart
       // If you prefer a chronological approach, you'd do 'preset' and set positions yourself
     }),
     []
@@ -280,9 +283,9 @@ function AnnotationGraph() {
           "text-halign": "center",
           "background-color": "#ccc",
           "border-style": "solid",
-          "border-width": 2,
+          "border-width": 0,
           //"border-color": "#333",
-          "font-size": "10px",
+          "font-size": "12px",
           "text-wrap": "wrap",
           "text-max-width": "100px", // so the label can wrap
           "text-overflow-wrap": "anywhere",
@@ -293,8 +296,8 @@ function AnnotationGraph() {
         selector: 'node[type = "annotation"]',
         style: {
           shape: "ellipse",
-          width: 60,
-          height: 60,
+          width: 100,
+          height: 100,
         },
       },
       // creator => square
@@ -302,29 +305,35 @@ function AnnotationGraph() {
         selector: 'node[type = "creator"]',
         style: {
           shape: "square",
-          width: 50,
-          height: 50,
-          "background-color": "#FFD700", // gold
+          width: 100,
+          height: 100,
+          "background-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-purple-light")
+            .trim(),
         },
       },
       // criterion => diamond
       {
         selector: 'node[type = "criterion"]',
         style: {
-          shape: "diamond",
-          width: 50,
-          height: 50,
-          "background-color": "#9FE2BF", // light green
+          shape: "cut-rectangle",
+          width: 100,
+          height: 60,
+          "background-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-orange")
+            .trim(),
         },
       },
-      // citation => triangle
+      // citation => hexagon
       {
         selector: 'node[type = "citation"]',
         style: {
-          shape: "triangle",
-          width: 50,
-          height: 50,
-          "background-color": "#DAB3FF", // pale purple
+          shape: "octagon",
+          width: 100,
+          height: 100,
+          "background-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-green-light")
+            .trim(),
         },
       },
 
@@ -333,20 +342,25 @@ function AnnotationGraph() {
         selector:
           'node[recognitionLevel = "icon:PreiconographicalRecognition"]',
         style: {
-          "background-color": "rgba(255, 187, 60, 0.3)",
-          "border-color": "rgba(255, 187, 60, 0.6)",
+          "background-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-anno-preico")
+            .trim(),
         },
       },
       {
         selector: 'node[recognitionLevel = "icon:IconographicalRecognition"]',
         style: {
-          "background-color": "rgba(234, 86, 130, 0.3)",
+          "background-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-anno-iconogra")
+            .trim(),
         },
       },
       {
         selector: 'node[recognitionLevel = "icon:IconologicalRecognition"]',
         style: {
-          "background-color": "rgba(93, 83, 133, 0.3)",
+          "background-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-anno-iconolo")
+            .trim(),
         },
       },
       // stage-based border color
@@ -373,15 +387,19 @@ function AnnotationGraph() {
         selector: "edge",
         style: {
           width: 1,
-          "line-color": "#888",
-          "target-arrow-color": "#888",
-          //"target-arrow-shape": "triangle",
+          "line-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-gray")
+            .trim(),
+          "target-arrow-color": getComputedStyle(document.documentElement)
+            .getPropertyValue("--vista-gray")
+            .trim(),
+          "target-arrow-shape": "triangle",
           "curve-style": "bezier",
           label: "data(label)",
-          "font-size": "8px",
-          "text-background-color": "#F6F2F1",
-          "text-background-opacity": 1,
-          "text-background-padding": "2px",
+          "font-size": "0px",
+          // "text-background-color": "#F6F2F1",
+          // "text-background-opacity": 1,
+          // "text-background-padding": "2px",
         },
       },
       // disagreesWith edges => red
