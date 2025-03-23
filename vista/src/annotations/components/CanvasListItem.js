@@ -137,9 +137,9 @@ class CanvasListItem extends Component {
 
     // Define stage colors using CSS variables (your CSS should define these)
     const stageColorMapping = {
-      Draft: "var(--vista-anno-draft)",
-      Published: "var(--vista-anno-published)",
-      Deprecated: "var(--vista-anno-deprecated)",
+      Draft: "var(--vista-orange)",
+      Published: "var(--vista-green)",
+      Deprecated: "var(--vista-gray-dark)",
       default: "var(--vista-gray)",
     };
     const stageColor =

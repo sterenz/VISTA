@@ -55,14 +55,14 @@ const ManageAnnotations = () => {
   // }, [annotations]);
 
   return (
-    <div className="p-4 mb-24">
+    <div className="p-4">
       <div className="grid grid-cols-3 gap-12 h-screen">
         {/* Pre-Iconographical Column */}
         <div
           id="pre-iconographical"
-          className="rounded-xl p-4 border border-vista-white-dark text-center overflow-y-scroll no-scrollbar"
+          className="rounded-xl p-4 border border-vista-white-dark text-center overflow-y-scroll no-scrollbar mb-24"
         >
-          <h3 className="text-sm font-semibold mb-2 text-vista-gray uppercase">
+          <h3 className="text-sm font-semibold mb-4 text-vista-gray uppercase">
             Pre-Iconographical Recognition
           </h3>
           {annotations
@@ -79,6 +79,7 @@ const ManageAnnotations = () => {
                 body={anno.body?.value || ""}
                 recognition="Pre-Iconographical"
                 citation={anno.wasGeneratedBy?.isExtractedFrom?.id || ""}
+                stage={anno.hasStage?.label || "Unknown"}
                 onDisagree={(id) => console.log("Disagree", id)}
                 onEdit={(id) => console.log("Edit", id)}
                 onConnect={(id) => console.log("Connect", id)}
@@ -91,9 +92,9 @@ const ManageAnnotations = () => {
         {/* Iconographical Column */}
         <div
           id="iconographical"
-          className="rounded-xl p-4 border border-vista-white-dark text-center"
+          className="rounded-xl p-4 border border-vista-white-dark text-center overflow-y-scroll no-scrollbar mb-24"
         >
-          <h3 className="text-sm font-semibold mb-2 text-vista-gray uppercase">
+          <h3 className="text-sm font-semibold mb-4 text-vista-gray uppercase">
             Iconographical Recognition
           </h3>
           {annotations
@@ -109,6 +110,7 @@ const ManageAnnotations = () => {
                 body={anno.body?.value || ""}
                 recognition="Iconographical"
                 citation={anno.wasGeneratedBy?.isExtractedFrom?.id || ""}
+                stage={anno.hasStage?.label || "Unknown"}
                 onDisagree={(id) => console.log("Disagree", id)}
                 onEdit={(id) => console.log("Edit", id)}
                 onConnect={(id) => console.log("Connect", id)}
@@ -121,9 +123,9 @@ const ManageAnnotations = () => {
         {/* Iconological Column */}
         <div
           id="iconological"
-          className="rounded-xl p-4 border border-vista-white-dark text-center"
+          className="rounded-xl p-4 border border-vista-white-dark text-center overflow-y-scroll no-scrollbar mb-24"
         >
-          <h3 className="text-sm font-semibold mb-2 text-vista-gray uppercase">
+          <h3 className="text-sm font-semibold mb-4 text-vista-gray uppercase">
             Iconological Recognition
           </h3>
           {annotations
@@ -139,6 +141,7 @@ const ManageAnnotations = () => {
                 body={anno.body?.value || ""}
                 recognition="Iconological"
                 citation={anno.wasGeneratedBy?.isExtractedFrom?.id || ""}
+                stage={anno.hasStage?.label || "Unknown"}
                 onDisagree={(id) => console.log("Disagree", id)}
                 onEdit={(id) => console.log("Edit", id)}
                 onConnect={(id) => console.log("Connect", id)}

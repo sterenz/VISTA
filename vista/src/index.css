@@ -59,8 +59,10 @@
     --vista-anno-preico-60: rgba(255, 187, 60, 0.2);
     --vista-anno-preico: #fbd284;
     --vista-anno-iconogra-chip: #9f4865;
+    --vista-anno-iconogra-60: rgba(234, 86, 130, 0.2);
     --vista-anno-iconogra: #ef95ae;
     --vista-anno-iconolo-chip: #6460aa;
+    --vista-anno-iconolo-60: rgba(82, 69, 254, 0.2);
     --vista-anno-iconolo: #948bf9;
   }
 }

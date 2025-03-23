@@ -12,7 +12,7 @@ import {
   RectangleTool,
   FreeformPathTool,
 } from "@psychobolt/react-paperjs-editor";
-import { Point } from "paper"; // Ensure paper.js is imported
+import { Point } from "paper";
 import flatten from "lodash/flatten";
 import EditTool from "../utils/EditTool";
 import { mapChildren } from "../utils/utils";

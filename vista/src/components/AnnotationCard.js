@@ -1,5 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
+import AddLinkIcon from "@material-ui/icons/Link";
+import EditIcon from "@material-ui/icons/Edit";
 
 const AnnotationCard = ({
   id,
@@ -7,6 +9,7 @@ const AnnotationCard = ({
   body,
   recognition,
   citation,
+  stage,
   onDisagree,
   onEdit,
   onConnect,
@@ -14,27 +17,38 @@ const AnnotationCard = ({
   // Map recognition level to Tailwind background colors.
   const backgroundColorMapping = {
     "Pre-Iconographical": "bg-vista-anno-preico-60",
-    Iconographical: "var(--vista-anno-iconogra)",
-    Iconological: "var(--vista-anno-iconolo)",
-    default: "var(--vista-gray)",
+    Iconographical: "bg-vista-anno-iconogra-60",
+    Iconological: "bg-vista-anno-iconolo-60",
+    default: "bg--vista-gray",
   };
 
   const recognitionBgColor =
     backgroundColorMapping[recognition] || backgroundColorMapping.default;
 
   const borderColorMapping = {
-    "Pre-Iconographical": "border-vista-anno-preico",
-    Iconographical: "var(--vista-anno-iconogra)",
-    Iconological: "var(--vista-anno-iconolo)",
-    default: "var(--vista-gray)",
+    "Pre-Iconographical": "border-vista-anno-preico-60",
+    Iconographical: "border-vista-anno-iconogra-60",
+    Iconological: "border-vista-anno-iconolo-60",
+    default: "border-vista-anno-gray",
   };
 
   const recognitionBdColor =
     borderColorMapping[recognition] || borderColorMapping.default;
 
+  const stageColorMapping = {
+    Draft: "var(--vista-orange)",
+    Published: "var(--vista-green)",
+    Deprecated: "var(--vista-gray-dark)",
+    default: "var(--vista-gray)",
+  };
+  const stageColor = stageColorMapping[stage] || stageColorMapping.default;
+
   return (
     <div
-      className={`p-4 rounded-lg ${recognitionBgColor} flex flex-col justify-between border ${recognitionBdColor} mb-2`}
+      className={`p-4 pb-2 rounded-r-lg ${recognitionBgColor} flex flex-col justify-between border ${recognitionBdColor} mb-2 text-vista-text text-left`}
+      style={{
+        borderLeft: `4px solid ${stageColor}`,
+      }}
     >
       {/* Header: Creator and ID */}
       <div className="flex justify-between items-center">
@@ -42,31 +56,33 @@ const AnnotationCard = ({
         <div className="text-xs text-gray-600 break-all">{id}</div>
       </div>
       {/* Body content */}
-      <div className="mt-2 text-sm">{body}</div>
+      <div className="py-3 font-semibold">{body}</div>
       {/* Optional citation */}
-      {citation && (
-        <div className="mt-2 text-xs text-blue-600">Citation: {citation}</div>
-      )}
+      {citation && <div className="mt-2 text-sm">Citation: {citation}</div>}
       {/* Action buttons */}
-      <div className="mt-4 flex justify-end space-x-2">
+      <div
+        className={`mt-4 pt-1 flex justify-between space-x-2 border-t ${recognitionBdColor}`}
+      >
         <button
           onClick={() => onDisagree(id)}
-          className="px-3 py-1 bg-red-500 text-white rounded text-xs"
+          className="text-sm font-bold hover:underline"
         >
           Disagree?
         </button>
-        <button
-          onClick={() => onEdit(id)}
-          className="px-3 py-1 bg-blue-500 text-white rounded text-xs"
-        >
-          Edit
-        </button>
-        <button
-          onClick={() => onConnect(id)}
-          className="px-3 py-1 bg-green-500 text-white rounded text-xs"
-        >
-          Connect
-        </button>
+        <div>
+          <button
+            onClick={() => onEdit(id)}
+            className="p-2 rounded-lg hover:bg-vista-gray"
+          >
+            <EditIcon />
+          </button>
+          <button
+            onClick={() => onConnect(id)}
+            className="p-2 rounded-lg hover:bg-vista-gray"
+          >
+            <AddLinkIcon />
+          </button>
+        </div>
       </div>
     </div>
   );
