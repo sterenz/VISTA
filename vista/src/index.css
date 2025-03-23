@@ -46,8 +46,11 @@
     --vista-bordeaux-dark: #6a0615;
 
     /* vista-anno */
+    --vista-anno-preico-chip: #ab853b;
     --vista-anno-preico: #fbd284;
+    --vista-anno-iconogra-chip: #9f4865;
     --vista-anno-iconogra: #ef95ae;
+    --vista-anno-iconolo-chip: #6460aa;
     --vista-anno-iconolo: #948bf9;
   }
 }
@@ -55,8 +58,7 @@
 #vista-mirador {
   position: relative;
   width: 100%;
-  height: 800px; /* Set the desired height */
-  margin-top: 40px;
+  height: 600px; /* Set the desired height */
   overflow: hidden;
 }
 
@@ -74,17 +76,6 @@ body > iframe {
   display: none;
 }
 /* END - HIDE RUNTIME ERROR OVERLAY */
-
-.App {
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.logo {
-  color: #891e2e;
-  font-style: italic;
-  font-family: "Times New Roman", Times, serif;
-}
 
 .MuiPaper-root {
   color: #f6f2f1 !important;
@@ -134,4 +125,8 @@ body > iframe {
 
 .annotation-metadata {
   padding: 8px;
+}
+
+#annotation-settings .MuiIconButton-root:hover {
+  background-color: transparent;
 }

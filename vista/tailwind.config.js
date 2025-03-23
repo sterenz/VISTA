@@ -47,6 +47,15 @@ module.exports = {
         "vista-anno-iconolo": {
           DEFAULT: "var(--vista-anno-iconolo)",
         },
+        "vista-anno-preico-chip": {
+          DEFAULT: "var(--vista-anno-preico-chip)",
+        },
+        "vista-anno-iconogra-chip": {
+          DEFAULT: "var(--vista-anno-iconogra-chip)",
+        },
+        "vista-anno-iconolo-chip": {
+          DEFAULT: "var(--vista-anno-iconolo-chip)",
+        },
       },
     },
   },

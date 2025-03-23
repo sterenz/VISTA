@@ -20,10 +20,11 @@ const MiradorViewer = () => {
 
     const container = miradorContainerRef.current; // Store ref value
 
-    // Ensure the container is empty before initializing
-    if (container) {
-      console.log("Cleaning up previous Mirador container...");
-      container.innerHTML = "";
+    // Cleanup any previous instance before re-initializing
+    if (miradorInstance.current) {
+      console.log("Destroying previous Mirador instance...");
+      miradorInstance.current.store.dispatch({ type: "RESET_MIRADOR" });
+      miradorInstance.current = null;
     }
 
     // Toggle which adapter you want to use:
@@ -65,33 +66,14 @@ const MiradorViewer = () => {
     return () => {
       console.log("Cleanup function running...");
 
-      if (!miradorInstance.current) {
-        console.warn("miradorInstance is already null, skipping cleanup.");
-        return;
-      }
-
-      try {
-        // Reset Mirador Redux store
-        if (miradorInstance.current.store) {
-          console.log("Resetting Mirador store...");
-          miradorInstance.current.store.dispatch({ type: "RESET_MIRADOR" });
-        }
-
-        // Remove Mirador container from DOM properly
-        if (container) {
-          console.log("Removing Mirador container...");
-          container.innerHTML = ""; // Clear again
-        }
-
-        // Force React to remount the container
-        setContainerKey((prevKey) => prevKey + 1);
-
+      if (miradorInstance.current) {
+        console.log("Resetting Mirador store...");
+        miradorInstance.current.store.dispatch({ type: "RESET_MIRADOR" });
         miradorInstance.current = null;
-        miradorContainerRef.current = null; // Reset ref
-        console.log("Mirador instance cleaned up.");
-      } catch (error) {
-        console.error("Error during Mirador cleanup:", error);
       }
+
+      // Instead of modifying innerHTML, trigger a React re-mount
+      setContainerKey((prevKey) => prevKey + 1);
     };
   }, []);
 

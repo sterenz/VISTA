@@ -2,17 +2,16 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import * as actions from "mirador/dist/es/src/state/actions";
 import { getWindowViewType } from "mirador/dist/es/src/state/selectors";
-import AddBoxIcon from "@material-ui/icons/AddBox";
+// import AddBoxIcon from "@material-ui/icons/AddBox";
 import GetAppIcon from "@material-ui/icons/GetApp";
+import Add from "@material-ui/icons/Add";
 import { MiradorMenuButton } from "mirador/dist/es/src/components/MiradorMenuButton";
 import { getVisibleCanvases } from "mirador/dist/es/src/state/selectors/canvases";
 import SingleCanvasDialog from "../components/SingleCanvasDialog";
 import AnnotationExportDialog from "../components/AnnotationExportDialog";
 import LocalStorageAdapter from "../adapters/LocalStorageAdapter";
 
-/** */
 class MiradorAnnotation extends Component {
-  /** */
   constructor(props) {
     super(props);
     this.state = {
@@ -26,7 +25,6 @@ class MiradorAnnotation extends Component {
       this.toggleSingleCanvasDialogOpen.bind(this);
   }
 
-  /** */
   openCreateAnnotationCompanionWindow(e) {
     const { addCompanionWindow } = this.props;
 
@@ -35,7 +33,6 @@ class MiradorAnnotation extends Component {
     });
   }
 
-  /** */
   toggleSingleCanvasDialogOpen() {
     const { singleCanvasDialogOpen } = this.state;
     this.setState({
@@ -43,7 +40,6 @@ class MiradorAnnotation extends Component {
     });
   }
 
-  /** */
   toggleCanvasExportDialog(e) {
     const { annotationExportDialogOpen } = this.state;
     const newState = {
@@ -52,7 +48,6 @@ class MiradorAnnotation extends Component {
     this.setState(newState);
   }
 
-  /** */
   render() {
     const {
       canvases,
@@ -70,10 +65,44 @@ class MiradorAnnotation extends Component {
       storageAdapter instanceof LocalStorageAdapter &&
       config.annotation.exportLocalStorageAnnotations;
     return (
-      <div>
-        <TargetComponent
-          {...targetProps} // eslint-disable-line react/jsx-props-no-spreading
-        />
+      <div
+        id="annotation-settings"
+        className="flex items-center w-full justify-between mt-4"
+      >
+        <div>
+          <span>
+            <TargetComponent
+              {...targetProps} // eslint-disable-line react/jsx-props-no-spreading
+            />
+            {singleCanvasDialogOpen && (
+              <SingleCanvasDialog
+                open={singleCanvasDialogOpen}
+                handleClose={this.toggleSingleCanvasDialogOpen}
+                switchToSingleCanvasView={switchToSingleCanvasView}
+              />
+            )}
+          </span>
+          <span className="pl-2">
+            {offerExportDialog && (
+              <MiradorMenuButton
+                aria-label="Export local annotations for visible items"
+                onClick={this.toggleCanvasExportDialog}
+                size="small"
+              >
+                <GetAppIcon />
+              </MiradorMenuButton>
+            )}
+          </span>
+
+          {offerExportDialog && (
+            <AnnotationExportDialog
+              canvases={canvases}
+              config={config}
+              handleClose={this.toggleCanvasExportDialog}
+              open={annotationExportDialogOpen}
+            />
+          )}
+        </div>
         <MiradorMenuButton
           aria-label="Create new annotation"
           onClick={
@@ -81,34 +110,16 @@ class MiradorAnnotation extends Component {
               ? this.openCreateAnnotationCompanionWindow
               : this.toggleSingleCanvasDialogOpen
           }
-          size="small"
+          // size="small"
+          className="hover:bg-none"
         >
-          <AddBoxIcon />
+          <div className="flex bg-vista-bordeaux text-white pl-3 pr-4 py-2 rounded-full hover:bg-vista-bordeaux-dark text-sm items-center">
+            <div className="pr-2">
+              <Add />
+            </div>
+            <div>New</div>
+          </div>
         </MiradorMenuButton>
-        {singleCanvasDialogOpen && (
-          <SingleCanvasDialog
-            open={singleCanvasDialogOpen}
-            handleClose={this.toggleSingleCanvasDialogOpen}
-            switchToSingleCanvasView={switchToSingleCanvasView}
-          />
-        )}
-        {offerExportDialog && (
-          <MiradorMenuButton
-            aria-label="Export local annotations for visible items"
-            onClick={this.toggleCanvasExportDialog}
-            size="small"
-          >
-            <GetAppIcon />
-          </MiradorMenuButton>
-        )}
-        {offerExportDialog && (
-          <AnnotationExportDialog
-            canvases={canvases}
-            config={config}
-            handleClose={this.toggleCanvasExportDialog}
-            open={annotationExportDialogOpen}
-          />
-        )}
       </div>
     );
   }

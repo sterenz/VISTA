@@ -2,8 +2,10 @@
 
 2025-22-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
+- Updated `CanvasListItems` to handle Level of Recognition chip and open close states on click.
 - Modified `AnnotationGraph.js`.
 - Added rule in `index-css` to hide runtime error ui.
+- Modified `MiradorViewer.js` to handle runtime React errors.
 
 2025-20-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
