@@ -1,5 +1,11 @@
 # 📑 Change log
 
+2025-23-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
+
+- Created `ManageAnnotations.js` to display annotation cards.
+- Created `AnnotationCard.js` to render annotations in card form.
+- Installed `react-connect-lines` with `yarn add react-connect-lines`.
+
 2025-22-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
 - Updated `CanvasListItems` to handle Level of Recognition chip and open close states on click.

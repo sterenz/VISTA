@@ -1,3 +1,4 @@
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
@@ -11,9 +12,9 @@ module.exports = {
           DEFAULT: "var(--vista-white)",
           dark: "var(--vista-white-dark)",
         },
-        "vista-purple": {
-          light: "var(--vista-purple-light)",
-          DEFAULT: "var(--vista-purlpe)", // Fixed typo from `purlpe` to `purple`
+        "vista-violet": {
+          light: "var(--vista-violet-light)",
+          DEFAULT: "var(--vista-violet)",
         },
         "vista-green": {
           light: "var(--vista-green-light)",
@@ -25,6 +26,15 @@ module.exports = {
         },
         "vista-yellow": {
           DEFAULT: "var(--vista-yellow)",
+          dark: "var(--vista-yellow-dark)",
+        },
+        "vista-magenta": {
+          DEFAULT: "var(--vista-magenta)",
+          dark: "var(--vista-magenta-dark)",
+        },
+        "vista-purple": {
+          DEFAULT: "var(--vista-purple)",
+          dark: "var(--vista-purple-dark)",
         },
         "vista-orange": {
           DEFAULT: "var(--vista-orange)",
@@ -39,6 +49,7 @@ module.exports = {
           dark: "var(--vista-bordeaux-dark)",
         },
         "vista-anno-preico": {
+          60: "var(--vista-anno-preico-60)",
           DEFAULT: "var(--vista-anno-preico)",
         },
         "vista-anno-iconogra": {

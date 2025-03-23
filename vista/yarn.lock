@@ -8996,6 +8996,11 @@ react-color@^2.19.3:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
+react-connect-lines@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/react-connect-lines/-/react-connect-lines-0.0.4.tgz#fd7ab6dcb987626c58a6e9d5bbc20dda1d2a7a19"
+  integrity sha512-54XyJ4JkCGXDiW6GUrDG/i4N6Y8evqIdjsAwq717KHnN28cOXcKJTq5mlog3IMPkw5IaPMfAhaicGjLzD1Q25g==
+
 react-copy-to-clipboard@^5.0.1:
   version "5.1.0"
   resolved "https://registry.yarnpkg.com/react-copy-to-clipboard/-/react-copy-to-clipboard-5.1.0.tgz#09aae5ec4c62750ccb2e6421a58725eabc41255c"
