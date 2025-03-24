@@ -1,70 +1,100 @@
-# Getting Started with Create React App
+# VISTA - Visual Interpretative Semantic Tagging Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+VISTA is a **web-based annotation tool** designed for **collaborative semantic tagging** of artworks using **IIIF manifests**. It extends **Mirador** to support structured **multi-level interpretations** based on **Panofsky’s tripartition** (Pre-Iconographical, Iconographical, and Iconological levels).
 
-## Available Scripts
+With VISTA, users can:
 
-In the project directory, you can run:
+- Annotate specific areas of an artwork.
+- Link different levels of recognition.
+- Disagree with existing interpretations and propose alternatives.
+- Visualize annotation relationships in a graph-based interface.
 
-### `yarn start`
+## 🚀 Why VISTA?
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Art interpretation is a layered process involving multiple levels of meaning. Traditional annotation tools often lack structured mechanisms to represent these levels and their relationships.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+VISTA was created to:
 
-### `yarn test`
+- Enable **structured, multi-level annotation** of artworks.
+- Foster **collaborative art analysis**, allowing disagreements and alternative perspectives.
+- Leverage **IIIF and Mirador** for seamless integration with existing digital archives.
+- Provide **graph-based visualization** of annotation relationships.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 🏗️ Architecture
 
-### `yarn build`
+- **Mirador Integration**: Mirador (version 3) is installed using:
+
+  ```bash
+  yarn add mirador
+  ```
+
+  The [Mirador repository](https://github.com/ProjectMirador/mirador) is used, along with the [mirador-annotations plugin](https://github.com/ProjectMirador/mirador-annotations), which is manually imported for better UI and functionality customization.
+
+VISTA builds on existing IIIF technologies and is structured as follows:
+
+- **Frontend**: A React-based UI extending **Mirador** for annotation functionalities. React efficiently manages state and UI re-rendering while fetching data from various sources.
+- **Styling**: Uses **Tailwind CSS** for a modular, maintainable design.
+- **IIIF & Mirador Integration**: Leverages **Mirador v3**, with manual integration of the **mirador-annotations plugin** for enhanced UI and annotation handling.
+- **LISA Data Model**: The core model for annotation storage and retrieval. LISA:
+  - Implements **Panofsky’s tripartition** for hierarchical interpretation.
+  - Structures annotations using the **Web Annotation Data Model (WADM)**.
+  - Organizes annotation collections and their relationships.
+- **Graph Visualization**: Uses **[Cytoscape.js](https://js.cytoscape.org/)** to display annotation relationships in an interactive network graph.
+- **Semantic Storage**: Annotations can be stored **as RDF in Blazegraph** using **JSON-LD**, ensuring semantic interoperability.
+
+### 📂 File Organization
+
+- **`src/annotations/`** – Handles annotations with:
+
+  - **Adapters** (e.g., `AnnotationCollectionAdapter.js`, `LocalStorageAdapter.js`) for annotation storage and Blazegraph integration.
+  - **Components** for Mirador’s annotation UI (draw, edit, manage annotations).
+  - **Plugins** like `miradorAnnotationPlugin.js` to extend Mirador’s annotation capabilities.
+
+- **`src/components/`** – Stores custom React UI components (annotation cards, manager, header, etc.).
+
+- **`src/helpers/`** – Utility functions, including JSON-LD handling and annotation management.
+
+- **`src/MiradorViewer.js`** – Configures and renders Mirador within the app.
+
+---
+
+## ⚠️ Drawbacks
+
+While VISTA enhances the annotation process, it comes with some trade-offs:
+
+- **Learning Curve**: The multi-level annotation model may require training for new users.
+- **LocalStorage Limitations**: Currently, annotations are stored locally unless integrated with a semantic backend.
+- **Integration Dependency**: VISTA relies on Mirador and IIIF, meaning its functionality is limited to IIIF-supported collections.
+
+---
+
+## 💻 Development Setup
+
+To set up VISTA locally, follow these steps:
+
+1. Install dependencies:
+
+```bash
+yarn install
+```
+
+2. Start the development server:
+
+```bash
+yarn start
+```
+
+The app will be available at [http://localhost:3000](http://localhost:3000).
+
+```bash
+yarn build
+```
 
 Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 📜 License
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+[![License: CC BY-NC 4.0](https://img.shields.io/badge/License-CC%20BY--NC%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc/4.0/)
 
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This work is licensed under CC BY-NC 4.0 ([Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/))  
+[![License: CC BY-NC 4.0](https://licensebuttons.net/l/by-nc/4.0/80x15.png)](https://creativecommons.org/licenses/by-nc/4.0/)
