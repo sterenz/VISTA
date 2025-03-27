@@ -5,6 +5,7 @@
 - Created `ManageAnnotations.js` to display annotation cards.
 - Created `AnnotationCard.js` to render annotations in card form.
 - Installed `react-connect-lines` with `yarn add react-connect-lines`.
+- Created `ConnectionTool.js` component.
 
 2025-22-03 - Stefano Renzetti <stefano.renzetti3@studio.unibo.it>
 
